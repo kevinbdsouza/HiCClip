@@ -83,8 +83,9 @@ def plot3d(representations, colors, labels):
     plt.figure()
     ax = plt.axes(projection='3d')
     for i in range(len(representations)):
-        ax.scatter3D(representations[i, 0], representations[i, 1], representations[i, 2], color=colors[i], label=labels[i])
-    plt.legend()
+        ax.scatter3D(representations[i, 0], representations[i, 1], representations[i, 2], color=colors[i])
+
+    plt.legend(handles=ax.legend_elements()[0], labels=labels)
     plt.show()
 
 
@@ -136,10 +137,9 @@ if __name__ == "__main__":
         sub_df = sub_df[sub_df != 0]
         rand = int(random.choice(sub_df.index))
         colors.append(cfg.colors_list[rand])
-        labels.append(cfg.class_elements_list[rand])
 
-    reduce_pca(embed_rows1, colors, labels)
-    reduce_pca(embed_rows2, colors, labels)
+    reduce_pca(embed_rows1, colors, cfg.class_elements_list)
+    reduce_pca(embed_rows2, colors, cfg.class_elements_list)
 
     #plot_smoothness(embed_rows1)
     #plot_smoothness(embed_rows2)
