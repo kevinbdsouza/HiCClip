@@ -85,7 +85,7 @@ def plot3d(representations, colors, labels):
     for i in range(len(representations)):
         scatter = ax.scatter3D(representations[i, 0], representations[i, 1], representations[i, 2], color=colors[i])
 
-    legend1 = ax.legend(scatter.legend_elements(), label=labels)
+    legend1 = ax.legend(scatter.legend_elements(), labels=labels)
     ax.add_artist(legend1)
     plt.tight_layout()
     plt.show()
