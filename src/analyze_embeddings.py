@@ -10,10 +10,14 @@ from matplotlib.colors import ListedColormap
 
 
 def reduce_pca(representations, colors, labels):
-    pca_ob = PCA(n_components=3)
+    n_components = 2
+    pca_ob = PCA(n_components=n_components)
     pca_ob.fit(representations)
     pca_rep = pca_ob.transform(representations)
-    plot3d(pca_rep, colors, labels)
+    if n_components == 3:
+        plot3d(pca_rep, colors, labels)
+    else:
+        plot2d(pca_rep, colors, labels)
 
 
 def simple_plot(hic_win, mode):
@@ -74,6 +78,25 @@ def plot_smoothness(representations):
     plt.show()
 
 
+def plot2d(representations, color_index, cfg):
+    """
+    plot3d(representations) -> No return object
+    Plot first 3 dims of representations.
+    Args:
+        representations (Array): representation matrix
+    """
+
+    plt.figure()
+    ax = plt.axes(projection='2d')
+    color_map = ListedColormap(cfg.colors_list)
+
+    scatter = ax.scatter2D(representations[:, 0], representations[:, 1], c=color_index, cmap=color_map)
+
+    plt.legend(handles=scatter.legend_elements()[0], labels=cfg.class_elements_list)
+    plt.tight_layout()
+    plt.show()
+
+
 def plot3d(representations, color_index, cfg):
     """
     plot3d(representations) -> No return object
@@ -86,7 +109,8 @@ def plot3d(representations, color_index, cfg):
     ax = plt.axes(projection='3d')
     color_map = ListedColormap(cfg.colors_list)
 
-    scatter = ax.scatter3D(representations[:, 0], representations[:, 1], representations[:, 2], c=color_index, cmap=color_map)
+    scatter = ax.scatter3D(representations[:, 0], representations[:, 1], representations[:, 2], c=color_index,
+                           cmap=color_map)
 
     plt.legend(handles=scatter.legend_elements()[0], labels=cfg.class_elements_list)
     plt.tight_layout()
@@ -141,14 +165,14 @@ if __name__ == "__main__":
         sub_df = sub_df[sub_df != 0]
         rand = int(random.choice(sub_df.index))
         colors.append(rand)
-        #labels.append(cfg.class_elements_list[rand])
+        # labels.append(cfg.class_elements_list[rand])
 
     reduce_pca(embed_rows1, colors, cfg)
     reduce_pca(embed_rows2, colors, cfg)
 
-    #plot_smoothness(embed_rows1)
-    #plot_smoothness(embed_rows2)
+    # plot_smoothness(embed_rows1)
+    # plot_smoothness(embed_rows2)
 
-    #plot_euclid_heatmap(embed_rows1)
-    #plot_euclid_heatmap(embed_rows2)
+    # plot_euclid_heatmap(embed_rows1)
+    # plot_euclid_heatmap(embed_rows2)
     print("done")
