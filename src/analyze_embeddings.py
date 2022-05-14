@@ -6,6 +6,8 @@ from utils import get_cumpos
 from config import Config
 import pandas as pd
 import random
+from matplotlib.colors import ListedColormap
+
 
 def reduce_pca(representations, colors, labels):
     pca_ob = PCA(n_components=3)
@@ -72,7 +74,7 @@ def plot_smoothness(representations):
     plt.show()
 
 
-def plot3d(representations, colors, labels):
+def plot3d(representations, color_index, cfg):
     """
     plot3d(representations) -> No return object
     Plot first 3 dims of representations.
@@ -82,11 +84,11 @@ def plot3d(representations, colors, labels):
 
     plt.figure()
     ax = plt.axes(projection='3d')
-    for i in range(len(representations)):
-        scatter = ax.scatter3D(representations[i, 0], representations[i, 1], representations[i, 2], color=colors[i], label=labels[i])
+    color_map = ListedColormap(cfg.colors_list)
 
-    legend1 = ax.legend(scatter.legend_elements()[0])
-    ax.add_artist(legend1)
+    scatter = ax.scatter3D(representations[:, 0], representations[:, 1], representations[:, 2], color=color_index, cmap=color_map)
+
+    plt.legend(handles=scatter.legend_elements()[0], labels=cfg.class_elements_list)
     plt.tight_layout()
     plt.show()
 
@@ -138,11 +140,11 @@ if __name__ == "__main__":
         sub_df = main_data.loc[i]
         sub_df = sub_df[sub_df != 0]
         rand = int(random.choice(sub_df.index))
-        colors.append(cfg.colors_list[rand])
-        labels.append(cfg.class_elements_list[rand])
+        colors.append(rand)
+        #labels.append(cfg.class_elements_list[rand])
 
-    reduce_pca(embed_rows1, colors, labels)
-    reduce_pca(embed_rows2, colors, labels)
+    reduce_pca(embed_rows1, colors, cfg)
+    reduce_pca(embed_rows2, colors, cfg)
 
     #plot_smoothness(embed_rows1)
     #plot_smoothness(embed_rows2)
