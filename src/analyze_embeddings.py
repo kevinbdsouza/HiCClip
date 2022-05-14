@@ -119,7 +119,7 @@ if __name__ == "__main__":
     embed_rows1 = embed_rows1[cum_pos + 1:, ]
     embed_rows2 = embed_rows2[cum_pos + 1:, ]
 
-    #reduce_pca(embed_rows1)
+    reduce_pca(embed_rows1)
     #reduce_pca(embed_rows2)
 
     #plot3d(embed_rows1)
@@ -128,6 +128,6 @@ if __name__ == "__main__":
     #plot_smoothness(embed_rows1)
     #plot_smoothness(embed_rows2)
 
-    plot_euclid_heatmap(embed_rows1)
-    plot_euclid_heatmap(embed_rows2)
+    #plot_euclid_heatmap(embed_rows1)
+    #plot_euclid_heatmap(embed_rows2)
     print("done")
