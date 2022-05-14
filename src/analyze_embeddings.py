@@ -87,10 +87,9 @@ def plot2d(representations, color_index, cfg):
     """
 
     plt.figure()
-    ax = plt.axes(projection='2d')
     color_map = ListedColormap(cfg.colors_list)
 
-    scatter = ax.scatter2D(representations[:, 0], representations[:, 1], c=color_index, cmap=color_map)
+    scatter = plt.scatter(representations[:, 0], representations[:, 1], c=color_index, cmap=color_map)
 
     plt.legend(handles=scatter.legend_elements()[0], labels=cfg.class_elements_list)
     plt.tight_layout()
