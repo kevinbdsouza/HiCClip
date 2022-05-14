@@ -2,6 +2,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 import seaborn as sns
 from sklearn.decomposition import PCA
+from utils import get_cumpos
+from config import Config
 
 
 def reduce_pca(representations):
@@ -102,10 +104,24 @@ def plot_euclid_heatmap(representations):
 
 
 if __name__ == "__main__":
+    cfg = Config()
+    chr = 22
+    cum_pos = get_cumpos(cfg, chr)
+
     embed_rows1 = np.load("/data2/hic_lstm/downstream/predictions/embeddings_temp.npy")
     embed_rows2 = np.load("/data2/hic_lstm/downstream/predictions/embeddings_GM12878.npy")
 
+    embed_rows1 = embed_rows1[cum_pos + 1:, ]
+    embed_rows2 = embed_rows2[cum_pos + 1:, ]
+
     reduce_pca(embed_rows1)
+    reduce_pca(embed_rows2)
+
     plot3d(embed_rows1)
+    plot3d(embed_rows2)
+
     plot_smoothness(embed_rows1)
+    plot_smoothness(embed_rows2)
+
     plot_euclid_heatmap(embed_rows1)
+    plot_euclid_heatmap(embed_rows2)
