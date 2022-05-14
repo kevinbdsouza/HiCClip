@@ -86,7 +86,7 @@ def plot3d(representations, color_index, cfg):
     ax = plt.axes(projection='3d')
     color_map = ListedColormap(cfg.colors_list)
 
-    scatter = ax.scatter3D(representations[:, 0], representations[:, 1], representations[:, 2], color=color_index, cmap=color_map)
+    scatter = ax.scatter3D(representations[:, 0], representations[:, 1], representations[:, 2], c=color_index, cmap=color_map)
 
     plt.legend(handles=scatter.legend_elements()[0], labels=cfg.class_elements_list)
     plt.tight_layout()
