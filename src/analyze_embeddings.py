@@ -4,7 +4,7 @@ import seaborn as sns
 from sklearn.decomposition import PCA
 from utils import get_cumpos
 from config import Config
-
+import pandas as pd
 
 def reduce_pca(representations):
     pca_ob = PCA(n_components=3)
@@ -115,6 +115,7 @@ if __name__ == "__main__":
 
     embed_rows1 = np.load("/data2/hic_lstm/downstream/predictions/embeddings_temp.npy")
     embed_rows2 = np.load("/data2/hic_lstm/downstream/predictions/embeddings_GM12878.npy")
+    main_data = pd.read_csv("/data2/hic_lstm/downstream/predictions/element_data_chr%s.csv" % (chr))
 
     embed_rows1 = embed_rows1[cum_pos + 1:, ]
     embed_rows2 = embed_rows2[cum_pos + 1:, ]
