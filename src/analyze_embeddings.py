@@ -82,7 +82,8 @@ def plot3d(representations, colors, labels):
 
     plt.figure()
     ax = plt.axes(projection='3d')
-    ax.scatter3D(representations[:, 0], representations[:, 1], representations[:, 2], color=colors, label=labels)
+    for i in range(len(representations)):
+        ax.scatter3D(representations[i, 0], representations[i, 1], representations[i, 2], color=colors[i], label=labels[i])
     plt.legend()
     plt.show()
 
