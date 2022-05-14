@@ -28,7 +28,7 @@ def simple_plot(hic_win, mode):
         ax = sns.heatmap(hic_win, cmap="Reds", vmin=0, vmax=1)
         ax.set_yticks([])
         ax.set_xticks([])
-        plt.savefig("/home/kevindsouza/Downloads/chr21.png")
+        # plt.savefig("/home/kevindsouza/Downloads/chr21.png")
         plt.show()
 
     if mode == "diff":
@@ -100,7 +100,12 @@ def plot_euclid_heatmap(representations):
         for r2 in range(nr):
             euclid_heatmap[r1, r2] = np.linalg.norm(representations[r1, :] - representations[r2, :])
 
-    simple_plot(euclid_heatmap, mode="reds")
+    plt.figure()
+    sns.set_theme()
+    ax = sns.heatmap(euclid_heatmap, cmap="Reds", vmin=0)
+    ax.set_yticks([])
+    ax.set_xticks([])
+    plt.show()
 
 
 if __name__ == "__main__":
@@ -114,14 +119,15 @@ if __name__ == "__main__":
     embed_rows1 = embed_rows1[cum_pos + 1:, ]
     embed_rows2 = embed_rows2[cum_pos + 1:, ]
 
-    reduce_pca(embed_rows1)
-    reduce_pca(embed_rows2)
+    #reduce_pca(embed_rows1)
+    #reduce_pca(embed_rows2)
 
-    plot3d(embed_rows1)
-    plot3d(embed_rows2)
+    #plot3d(embed_rows1)
+    #plot3d(embed_rows2)
 
-    plot_smoothness(embed_rows1)
-    plot_smoothness(embed_rows2)
+    #plot_smoothness(embed_rows1)
+    #plot_smoothness(embed_rows2)
 
     plot_euclid_heatmap(embed_rows1)
     plot_euclid_heatmap(embed_rows2)
+    print("done")
