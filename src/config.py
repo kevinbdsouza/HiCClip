@@ -63,6 +63,11 @@ class Config:
                 print("Directory %s exists" % file_path)
 
         "classification"
+        self.class_elements_list = ["Gene Expression", "Replication Timing", "Enhancers", "TSS",
+                                    "PE-Interactions", "FIREs", "TADs", "Loop Domains",
+                                    "TADBs", "Subcompartments"]
+        self.class_columns = [str(i) for i in range(0, 10)]
+        self.colors_list = ["C0", "C1", "C2", "C3", "C4", "C5", "C6", "C7", "C8", "C9"]
 
         "knockout"
 

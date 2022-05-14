@@ -5,12 +5,13 @@ from sklearn.decomposition import PCA
 from utils import get_cumpos
 from config import Config
 import pandas as pd
+import random
 
-def reduce_pca(representations):
+def reduce_pca(representations, colors, labels):
     pca_ob = PCA(n_components=3)
     pca_ob.fit(representations)
     pca_rep = pca_ob.transform(representations)
-    plot3d(pca_rep)
+    plot3d(pca_rep, colors, labels)
 
 
 def simple_plot(hic_win, mode):
@@ -71,7 +72,7 @@ def plot_smoothness(representations):
     plt.show()
 
 
-def plot3d(representations):
+def plot3d(representations, colors, labels):
     """
     plot3d(representations) -> No return object
     Plot first 3 dims of representations.
@@ -81,7 +82,7 @@ def plot3d(representations):
 
     plt.figure()
     ax = plt.axes(projection='3d')
-    ax.scatter3D(representations[:, 0], representations[:, 1], representations[:, 2], 'red')
+    ax.scatter3D(representations[:, 0], representations[:, 1], representations[:, 2], color=colors, label=labels)
     plt.show()
 
 
@@ -116,15 +117,27 @@ if __name__ == "__main__":
     embed_rows1 = np.load("/data2/hic_lstm/downstream/predictions/embeddings_temp.npy")
     embed_rows2 = np.load("/data2/hic_lstm/downstream/predictions/embeddings_GM12878.npy")
     main_data = pd.read_csv("/data2/hic_lstm/downstream/predictions/element_data_chr%s.csv" % (chr))
+    main_data["pos"] = main_data["pos"] - (cum_pos + 1)
+    main_data = main_data[cfg.class_columns + ["pos"]]
 
     embed_rows1 = embed_rows1[cum_pos + 1:, ]
     embed_rows2 = embed_rows2[cum_pos + 1:, ]
+    embed_rows1 = embed_rows1[main_data["pos"]]
+    embed_rows2 = embed_rows2[main_data["pos"]]
 
-    reduce_pca(embed_rows1)
-    #reduce_pca(embed_rows2)
+    main_data = main_data[cfg.class_columns]
+    colors = []
+    labels = []
 
-    #plot3d(embed_rows1)
-    #plot3d(embed_rows2)
+    for i in range(len(main_data)):
+        sub_df = main_data.loc[i]
+        sub_df = sub_df[sub_df != 0]
+        rand = int(random.choice(sub_df.index))
+        colors.append(cfg.colors_list[rand])
+        labels.append(cfg.class_elements_list[rand])
+
+    reduce_pca(embed_rows1, colors, labels)
+    reduce_pca(embed_rows2, colors, labels)
 
     #plot_smoothness(embed_rows1)
     #plot_smoothness(embed_rows2)
