@@ -139,39 +139,33 @@ def plot_euclid_heatmap(representations):
     plt.show()
 
 
-if __name__ == "__main__":
-    cfg = Config()
-    chr = 22
-    cum_pos = get_cumpos(cfg, chr)
-
-    embed_rows1 = np.load("/data2/hic_lstm/downstream/predictions/embeddings_temp.npy")
-    embed_rows2 = np.load("/data2/hic_lstm/downstream/predictions/embeddings_GM12878.npy")
+def plot_embed_rows():
+    embed_rows = np.load("/data2/hic_lstm/downstream/predictions/embeddings_temp.npy")
     main_data = pd.read_csv("/data2/hic_lstm/downstream/predictions/element_data_chr%s.csv" % (chr))
     main_data["pos"] = main_data["pos"] - (cum_pos + 1)
     main_data = main_data[cfg.class_columns + ["pos"]]
 
-    embed_rows1 = embed_rows1[cum_pos + 1:, ]
-    embed_rows2 = embed_rows2[cum_pos + 1:, ]
-    embed_rows1 = embed_rows1[main_data["pos"]]
-    embed_rows2 = embed_rows2[main_data["pos"]]
-
+    embed_rows = embed_rows[cum_pos + 1:, ]
+    embed_rows = embed_rows[main_data["pos"]]
     main_data = main_data[cfg.class_columns]
+
     colors = []
-    labels = []
 
     for i in range(len(main_data)):
         sub_df = main_data.loc[i]
         sub_df = sub_df[sub_df != 0]
         rand = int(random.choice(sub_df.index))
         colors.append(rand)
-        # labels.append(cfg.class_elements_list[rand])
 
-    reduce_pca(embed_rows1, colors, cfg)
-    reduce_pca(embed_rows2, colors, cfg)
-
+    reduce_pca(embed_rows, colors, cfg)
     # plot_smoothness(embed_rows1)
-    # plot_smoothness(embed_rows2)
-
-    # plot_euclid_heatmap(embed_rows1)
     # plot_euclid_heatmap(embed_rows2)
+
+
+if __name__ == "__main__":
+    cfg = Config()
+    chr = 22
+    cum_pos = get_cumpos(cfg, chr)
+
+    plot_embed_rows()
     print("done")
