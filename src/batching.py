@@ -6,6 +6,7 @@ from config import Config
 from utils import get_cumpos
 from utils import simple_plot
 
+
 class BatchFasta():
     """
     Class to BatchFasta
@@ -83,12 +84,19 @@ class BatchHiCMaps():
         self.fill_length = self.cfg.text_seq_len - ((self.cumpos_next - self.cumpos) % self.cfg.text_seq_len)
         self.hic_size = (self.cumpos_next - self.cumpos) + self.fill_length
 
+    def contactProbabilities(self, values, smoothing=8, delta=1e-10):
+        coeff = np.nan_to_num(1 / (values + delta))
+        contact_prob = np.power(1 / np.exp(smoothing), coeff)
+        return contact_prob
+
     def load_hic(self):
         try:
-            data = pd.read_csv("%s%s/%s/hic_chr%s.txt" % (self.cfg.hic_path, self.cfg.cell, self.chr, self.chr), sep="\t",
+            data = pd.read_csv("%s%s/%s/hic_chr%s.txt" % (self.cfg.hic_path, self.cfg.cell, self.chr, self.chr),
+                               sep="\t",
                                names=['i', 'j', 'v'])
             data = data.dropna()
             data[['i', 'j']] = data[['i', 'j']] / cfg.resolution
+            data['v'] = self.contactProbabilities(data['v'], smoothing=cfg.hic_smoothing)
             rows = np.array(data["i"]).astype(int)
             cols = np.array(data["j"]).astype(int)
 
