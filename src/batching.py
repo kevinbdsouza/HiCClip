@@ -56,7 +56,7 @@ class BatchHiCLSTMEmbeddings():
                 r_embeds = embed_rows[r * seq_len: (r + 1) * seq_len, :]
                 c_embeds = embed_rows[c * seq_len: (c + 1) * seq_len, :]
 
-                embeds = np.concatenate((r_embeds, c_embeds), axis=1)
+                embeds = np.concatenate((r_embeds, c_embeds), axis=0)
                 embed_input.append(embeds)
 
         embed_input = np.array(embed_input)
