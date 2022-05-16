@@ -67,8 +67,67 @@ class BatchHiCLSTMEmbeddings():
         return batch_embed_input
 
 
+class BatchHiCMaps():
+    """
+    Class to Batch HiCLSTM Embeddings for Clip
+    """
+
+    def __init__(self, cfg, chr):
+        self.chr = chr
+        self.cfg = cfg
+        self.cumpos = get_cumpos(cfg, chr)
+        if chr == 22:
+            self.cumpos_next = cfg.genome_len
+        else:
+            self.cumpos_next = get_cumpos(cfg, chr + 1)
+        self.fill_length = self.cfg.text_seq_len - ((self.cumpos_next - self.cumpos) % self.cfg.text_seq_len)
+        self.hic_size = (self.cumpos_next - self.cumpos) + self.fill_length
+
+    def load_hic(self):
+        try:
+            data = pd.read_csv("%s%s/%s/hic_chr%s.txt" % (self.cfg.hic_path, self.cfg.cell, self.chr, self.chr), sep="\t",
+                               names=['i', 'j', 'v'])
+            data = data.dropna()
+            data[['i', 'j']] = data[['i', 'j']] / cfg.resolution
+            rows = np.array(data["i"]).astype(int)
+            cols = np.array(data["j"]).astype(int)
+
+            hic_matrix = np.zeros((self.hic_size, self.hic_size))
+            hic_matrix[rows, cols] = np.array(data["v"])
+            hic_upper = np.triu(hic_matrix)
+            hic_matrix[cols, rows] = np.array(data["v"])
+            hic_lower = np.tril(hic_matrix)
+            hic_mat = hic_upper + hic_lower
+            hic_mat[np.diag_indices_from(hic_mat)] /= 2
+            return hic_mat
+        except Exception as e:
+            print("Hi-C txt file does not exist or error during Juicer extraction")
+
+    def batch_hic_maps(self, batch_size):
+        hic_mat = self.load_hic()
+
+        seq_len = self.cfg.text_seq_len
+        num_seqs = int(self.hic_size / seq_len)
+
+        hic_input = []
+        batched_hic = []
+        for r in range(num_seqs):
+            for c in range(num_seqs):
+                hic_window = hic_mat[r * seq_len: (r + 1) * seq_len, c * seq_len: (c + 1) * seq_len]
+                hic_input.append(hic_window)
+
+                if (len(hic_input) == batch_size) or (r == num_seqs - 1 and c == num_seqs - 1):
+                    batched_hic.append(hic_input)
+                    hic_input = []
+
+        return batched_hic
+
+
 if __name__ == "__main__":
     cfg = Config()
     chr = 21
-    batch_embed_ob = BatchHiCLSTMEmbeddings(cfg, chr)
-    batch_embed_ob.batch_embeddings(500)
+    # batch_embed_ob = BatchHiCLSTMEmbeddings(cfg, chr)
+    # batch_embed_input = batch_embed_ob.batch_embeddings(500)
+
+    batch_hic_ob = BatchHiCMaps(cfg, chr)
+    batched_hic = batch_hic_ob.batch_hic_maps(500)
