@@ -4,7 +4,7 @@ import torch
 from torch import nn
 from config import Config
 from utils import get_cumpos
-
+from utils import simple_plot
 
 class BatchFasta():
     """
@@ -92,13 +92,10 @@ class BatchHiCMaps():
             rows = np.array(data["i"]).astype(int)
             cols = np.array(data["j"]).astype(int)
 
-            hic_matrix = np.zeros((self.hic_size, self.hic_size))
-            hic_matrix[rows, cols] = np.array(data["v"])
-            hic_upper = np.triu(hic_matrix)
-            hic_matrix[cols, rows] = np.array(data["v"])
-            hic_lower = np.tril(hic_matrix)
-            hic_mat = hic_upper + hic_lower
-            hic_mat[np.diag_indices_from(hic_mat)] /= 2
+            hic_mat = np.zeros((self.hic_size, self.hic_size))
+            hic_mat[rows, cols] = np.array(data["v"])
+            hic_mat[cols, rows] = np.array(data["v"])
+
             return hic_mat
         except Exception as e:
             print("Hi-C txt file does not exist or error during Juicer extraction")
@@ -106,6 +103,7 @@ class BatchHiCMaps():
     def batch_hic_maps(self, batch_size):
         hic_mat = self.load_hic()
 
+        simple_plot(hic_mat, mode="reds")
         seq_len = self.cfg.text_seq_len
         num_seqs = int(self.hic_size / seq_len)
 
