@@ -44,13 +44,14 @@ class BatchHiCLSTMEmbeddings():
         embed_rows = self.load_embeddings()
         embed_rows = embed_rows[self.cumpos + 1:self.cumpos_next]
 
-        embed_input = []
         seq_len = self.cfg.text_seq_len
         fill_length = seq_len - (len(embed_rows) % seq_len)
         fill = np.zeros((fill_length, 16))
         embed_rows = np.vstack((embed_rows, fill))
         num_seqs = int(len(embed_rows) / seq_len)
 
+        embed_input = []
+        batch_embed_input = []
         for r in range(num_seqs):
             for c in range(num_seqs):
                 r_embeds = embed_rows[r * seq_len: (r + 1) * seq_len, :]
@@ -59,12 +60,15 @@ class BatchHiCLSTMEmbeddings():
                 embeds = np.concatenate((r_embeds, c_embeds), axis=0)
                 embed_input.append(embeds)
 
-        embed_input = np.array(embed_input)
-        pass
+                if len(embed_input) == batch_size:
+                    batch_embed_input.append(embed_input)
+                    embed_input = []
+
+        return batch_embed_input
 
 
 if __name__ == "__main__":
     cfg = Config()
     chr = 21
     batch_embed_ob = BatchHiCLSTMEmbeddings(cfg, chr)
-    batch_embed_ob.batch_embeddings(200)
+    batch_embed_ob.batch_embeddings(500)
