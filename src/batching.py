@@ -60,7 +60,7 @@ class BatchHiCLSTMEmbeddings():
                 embeds = np.concatenate((r_embeds, c_embeds), axis=0)
                 embed_input.append(embeds)
 
-                if len(embed_input) == batch_size:
+                if (len(embed_input) == batch_size) or (r == num_seqs - 1 and c == num_seqs - 1):
                     batch_embed_input.append(embed_input)
                     embed_input = []
 
