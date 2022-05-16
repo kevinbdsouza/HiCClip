@@ -125,9 +125,9 @@ class BatchHiCMaps():
 
 if __name__ == "__main__":
     cfg = Config()
-    chr = 21
-    # batch_embed_ob = BatchHiCLSTMEmbeddings(cfg, chr)
-    # batch_embed_input = batch_embed_ob.batch_embeddings(500)
+    chr = 2
+    batch_embed_ob = BatchHiCLSTMEmbeddings(cfg, chr)
+    batch_embed_input = batch_embed_ob.batch_embeddings(500)
 
     batch_hic_ob = BatchHiCMaps(cfg, chr)
     batched_hic = batch_hic_ob.batch_hic_maps(500)
