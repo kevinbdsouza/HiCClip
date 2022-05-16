@@ -5,6 +5,7 @@ from torch import nn
 from config import Config
 from utils import get_cumpos
 
+
 class BatchFasta():
     """
     Class to BatchFasta
@@ -33,7 +34,7 @@ class BatchHiCLSTMEmbeddings():
         if chr == 22:
             self.cumpos_next = cfg.genome_len
         else:
-            self.cumpos_next = get_cumpos(cfg, chr+1)
+            self.cumpos_next = get_cumpos(cfg, chr + 1)
 
     def load_embeddings(self):
         embed_rows = np.load(self.cfg.embeddings_path)
@@ -41,11 +42,11 @@ class BatchHiCLSTMEmbeddings():
 
     def batch_embeddings(self, batch_size):
         embed_rows = self.load_embeddings()
-        embed_rows = embed_rows[self.cumpos+1:self.cumpos_next]
+        embed_rows = embed_rows[self.cumpos + 1:self.cumpos_next]
 
         embed_input = []
         seq_len = self.cfg.text_seq_len
-        fill_length = len(embed_rows)%seq_len
+        fill_length = seq_len - (len(embed_rows) % seq_len)
         fill = np.zeros((fill_length, 16))
         embed_rows = np.vstack((embed_rows, fill))
         num_seqs = int(len(embed_rows) / seq_len)
