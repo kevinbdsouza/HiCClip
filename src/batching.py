@@ -110,8 +110,6 @@ class BatchHiCMaps():
 
     def batch_hic_maps(self, batch_size):
         hic_mat = self.load_hic()
-
-        simple_plot(hic_mat, mode="reds")
         seq_len = self.cfg.text_seq_len
         num_seqs = int(self.hic_size / seq_len)
 
