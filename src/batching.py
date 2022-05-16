@@ -35,24 +35,21 @@ class BatchHiCLSTMEmbeddings():
 
     def batch_embeddings(self, batch_size):
         embed_rows = self.load_embeddings()
+        fill = np.zeros((9, 16))
+        embed_rows = np.vstack((embed_rows, fill))
         seq_len = self.cfg.text_seq_len
         embed_input = []
-        num_seqs = int(np.ceil(len(embed_rows) / self.cfg.text_seq_len))
+        num_seqs = int(len(embed_rows) / self.cfg.text_seq_len)
 
         for r in range(num_seqs):
             for c in range(num_seqs):
-                if r == num_seqs - 1:
-                    r_embeds = embed_rows[r * seq_len:, :]
-                else:
-                    r_embeds = embed_rows[r * seq_len: (r + 1) * seq_len, :]
-                if r == num_seqs - 1:
-                    c_embeds = embed_rows[c * seq_len:, :]
-                else:
-                    c_embeds = embed_rows[c * seq_len: (c + 1) * seq_len, :]
+                r_embeds = embed_rows[r * seq_len: (r + 1) * seq_len, :]
+                c_embeds = embed_rows[c * seq_len: (c + 1) * seq_len, :]
 
                 embeds = np.stack((r_embeds, c_embeds), axis=-1)
                 embed_input.append(embeds)
 
+        embed_input = np.array(embed_input)
         pass
 
 
