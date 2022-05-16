@@ -51,6 +51,7 @@ class Config:
         self.proj_dir = "/home/kevindsouza/Documents/projects/PhD/HiCFold/"
         self.model_dir = self.proj_dir + 'models/'
         self.output_directory = self.downstream_dir + "/predictions/"
+        self.embeddings_path = "/data2/hic_lstm/downstream/predictions/embeddings_temp.npy"
         self.processed_data_dir = "/data2/hic_lstm/downstream/predictions/processed_data/" + self.cell + "/"
 
         "create directories if they don't exist"
@@ -69,6 +70,81 @@ class Config:
         self.class_columns = [str(i) for i in range(0, 10)]
         self.colors_list = ["C0", "C1", "C2", "C3", "C4", "C5", "C6", "C7", "C8", "C9"]
 
-        "knockout"
+        "clip parameters"
+        self.dim_text = 32
+        self.dim_image = 32
+        self.dim_latent = 32
+        self.num_text_tokens = 288091
+        self.text_enc_depth = 1
+        self.text_seq_len = 100
+        self.text_heads = 4
+        self.visual_enc_depth = 1
+        self.visual_image_size = 100
+        self.visual_patch_size = 10
+        self.visual_heads = 4
+        self.use_all_token_embeds = True
+        self.decoupled_contrastive_learning = True
+        self.extra_latent_projection = True
+        self.use_visual_ssl = True
+        self.visual_ssl_type = 'simclr'
+        self.use_mlm = False
+        self.text_ssl_loss_weight = 0.05
+        self.image_ssl_loss_weight = 0.05
+        self.clip_batch_size = 200
+        self.wandb_clip_config = {"learning_rate": 1.1e-4,
+                                  "architecture": "clip",
+                                  "dataset": "hic",
+                                  "weight_decay": 6.02e-2,
+                                  "max_gradient_clipping_norm": 0.5,
+                                  "batch_size": 10 ** 4,
+                                  "epochs": 5}
+        self.wandb_clip_entity = "clip_ob"
+        self.wandb_clip_project = "clip"
+        self.pretrained_clip_model_path = None
+        self.save_path_clip = "./clip_checkpoints"
 
-        "duplication"
+        "diffusion parameters"
+        self.dpn_depth = 6
+        self.dpn_dim_head = 64
+        self.dpn_heads = 8
+        self.dp_normformer = False
+        self.weight_decay = 6.02e-2
+        self.max_grad_norm = 0.5
+        self.dp_loss_type = "l2"
+        self.clip = None
+        self.dp_condition_on_text_encodings = False
+        self.dp_timesteps = 100
+        self.dp_cond_drop_prob = 0.1
+        self.wandb_diffusion_config = {"learning_rate": 1.1e-4,
+                                       "architecture": "DiffusionPrior",
+                                       "dataset": "LAION-5B",
+                                       "weight_decay": self.weight_decay,
+                                       "max_gradient_clipping_norm": self.max_grad_norm,
+                                       "batch_size": 10 ** 4,
+                                       "epochs": 5,
+                                       "diffusion_prior_network": {"depth": self.dpn_depth,
+                                                                   "dim_head": self.dpn_dim_head,
+                                                                   "heads": self.dpn_heads,
+                                                                   "normformer": self.dp_normformer},
+                                       "diffusion_prior": {
+                                           "condition_on_text_encodings": self.dp_condition_on_text_encodings,
+                                           "timesteps": self.dp_timesteps,
+                                           "cond_drop_prob": self.dp_cond_drop_prob,
+                                           "loss_type": self.dp_loss_type,
+                                           "clip": self.clip}}
+        self.wandb_diffusion_entity = "laion"
+        self.wandb_diffusion_project = "diffusion-prior"
+        self.image_embed_url = "https://mystic.the-eye.eu/public/AI/cah/laion5b/embeddings/laion2B-en/img_emb/"
+        self.text_embed_url = "https://mystic.the-eye.eu/public/AI/cah/laion5b/embeddings/laion2B-en/text_emb/"
+        self.dropout = 5e-2
+        self.amp = False
+        self.image_embed_dim = 768
+        self.train_percent = 0.7
+        self.val_percent = 0.2
+        self.test_percent = 0.1
+        self.save_interval = 30
+        self.save_path_diffusion = "./diffusion_prior_checkpoints"
+        self.pretrained_diffusion_model_path = None
+
+        self.num_test_embeddings = 100
+        self.report_metrics_every = 100
