@@ -52,7 +52,7 @@ class BatchHiCLSTMEmbeddings():
         num_seqs = int(len(embed_rows) / seq_len)
 
         embed_input = []
-        batch_embed_input = []
+        batched_embed = []
         for r in range(num_seqs):
             for c in range(num_seqs):
                 r_embeds = embed_rows[r * seq_len: (r + 1) * seq_len, :]
@@ -62,10 +62,10 @@ class BatchHiCLSTMEmbeddings():
                 embed_input.append(embeds)
 
                 if (len(embed_input) == batch_size) or (r == num_seqs - 1 and c == num_seqs - 1):
-                    batch_embed_input.append(embed_input)
+                    batched_embed.append(embed_input)
                     embed_input = []
 
-        return batch_embed_input
+        return batched_embed
 
 
 class BatchHiCMaps():
@@ -129,9 +129,14 @@ class BatchHiCMaps():
 
 if __name__ == "__main__":
     cfg = Config()
-    chr = 1
-    batch_embed_ob = BatchHiCLSTMEmbeddings(cfg, chr)
-    batch_embed_input = batch_embed_ob.batch_embeddings(500)
 
-    batch_hic_ob = BatchHiCMaps(cfg, chr)
-    batched_hic = batch_hic_ob.batch_hic_maps(500)
+    for chr in cfg.chr_train_list:
+        batch_embed_ob = BatchHiCLSTMEmbeddings(cfg, chr)
+        batched_embed = batch_embed_ob.batch_embeddings(500)
+        np.save(cfg.batched_hic_path + "embed_%s.npy" % chr, batched_embed)
+
+        batch_hic_ob = BatchHiCMaps(cfg, chr)
+        batched_hic = batch_hic_ob.batch_hic_maps(500)
+        np.save(cfg.batched_hic_path + "hic_%s.npy" % chr, batched_hic)
+
+    print("done")

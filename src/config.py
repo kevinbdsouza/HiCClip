@@ -14,7 +14,7 @@ class Config:
         self.genome_len = 288091
         self.resolution = 10000
         self.cell = "GM12878"
-        self.chr_train_list = list(range(22, 23))
+        self.chr_train_list = list(range(1, 23))
         self.chr_test_list = list(range(22, 23))
         self.save_processed_data = False
 
@@ -23,6 +23,7 @@ class Config:
         self.downstream_dir = self.data_path + "downstream/"
         self.fasta_batch_size = 1000
         self.fasta_path = self.data_path + "fasta/"
+        self.batched_hic_path = self.data_path + "batched_hic_hg19/"
 
         "Model Paramters"
         self.pos_embed_size = 16
