@@ -168,9 +168,9 @@ if __name__ == "__main__":
     embed_rows = np.load("/data2/hic_lstm/downstream/predictions/embeddings_temp.npy")
     colors = []
 
-    chr_umap = False
-    do_umap = True
-    chr_dbscan = False
+    chr_umap = True
+    do_umap = False
+    chr_dbscan = True
     do_dbscan = False
 
     if chr_umap:
@@ -195,6 +195,6 @@ if __name__ == "__main__":
     if not chr_dbscan and not do_dbscan:
         plot2d(reps_tasks, colors, cfg)
     else:
-        plot2d(reps_tasks, colors, cfg)
+        plot2d(reps_tasks, labels, cfg)
 
     print("done")
