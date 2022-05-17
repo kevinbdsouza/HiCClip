@@ -130,7 +130,7 @@ def plot_euclid_heatmap(representations):
     plt.show()
 
 
-def plot_embed_rows(embed_rows, colors, cfg, chr, chr_umap=False, chr_dbscan=False):
+def plot_embed_rows(embed_rows, colors, cfg, chr, chr_umap=False):
     cum_pos = get_cumpos(cfg, chr)
     main_data = pd.read_csv("/data2/hic_lstm/downstream/predictions/element_data_chr%s.csv" % (chr))
     main_data["pos"] = main_data["pos"] - (cum_pos + 1)
@@ -151,16 +151,11 @@ def plot_embed_rows(embed_rows, colors, cfg, chr, chr_umap=False, chr_dbscan=Fal
     if chr_umap:
         reps_chr = reduce_umap(reps_chr)
 
-    if chr_dbscan:
-        labels_chr = cluster_dbscan(reps_chr)
-    else:
-        labels_chr = None
-
-        # reduce_pca(embed_rows, colors, cfg)
+    # reduce_pca(embed_rows, colors, cfg)
     # plot_smoothness(embed_rows1)
     # plot_euclid_heatmap(embed_rows2)
 
-    return reps_chr, colors, labels_chr
+    return reps_chr, colors
 
 
 if __name__ == "__main__":
@@ -170,29 +165,25 @@ if __name__ == "__main__":
 
     chr_umap = True
     do_umap = False
-    chr_dbscan = True
-    do_dbscan = False
+    do_dbscan = True
 
     if chr_umap:
         reps_tasks = np.empty((0, 2))
     else:
         reps_tasks = np.empty((0, 16))
-    labels = np.empty((0, 1))
+    labels = np.empty((0,))
 
     for chr in cfg.chr_train_list:
-        reps_chr, colors, labels_chr = plot_embed_rows(embed_rows, colors, cfg, chr, chr_umap, chr_dbscan)
+        reps_chr, colors = plot_embed_rows(embed_rows, colors, cfg, chr, chr_umap)
         reps_tasks = np.concatenate((reps_tasks, reps_chr), axis=0)
-
-        if chr_dbscan:
-            labels = np.concatenate((labels, labels_chr), axis=0)
 
     if not chr_umap and do_umap:
         reps_tasks = reduce_umap(reps_tasks)
 
-    if not chr_dbscan and do_dbscan:
-        labels_chr = cluster_dbscan(reps_tasks)
+    if do_dbscan:
+        labels = cluster_dbscan(reps_tasks)
 
-    if not chr_dbscan and not do_dbscan:
+    if not do_dbscan:
         plot2d(reps_tasks, colors, cfg)
     else:
         plot2d(reps_tasks, labels, cfg)
