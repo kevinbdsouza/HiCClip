@@ -20,7 +20,7 @@ def cluster_dbscan(representations):
 
 
 def reduce_umap(representations):
-    umap_rep = umap.UMAP(n_neighbors=5, min_dist=0.1).fit_transform(representations)
+    umap_rep = umap.UMAP(n_neighbors=10, min_dist=0.001).fit_transform(representations)
     return umap_rep
 
 
@@ -82,7 +82,7 @@ def plot2d(representations, color_index, cfg):
     plt.legend(handles=scatter.legend_elements()[0], labels=cfg.class_elements_list, loc="best",
                bbox_to_anchor=(1, 0.5), fontsize=18)
     plt.tight_layout()
-    plt.savefig("/home/kevindsouza/Downloads/umap_embeds_5_0.1.png")
+    plt.savefig("/home/kevindsouza/Downloads/umap_embeds_10_0.001.png")
     plt.show()
     print("done")
 
