@@ -20,7 +20,7 @@ def cluster_dbscan(representations):
 
 
 def reduce_umap(representations):
-    umap_rep = umap.UMAP().fit_transform(representations)
+    umap_rep = umap.UMAP(n_neighbors=5, min_dist=0.1).fit_transform(representations)
     return umap_rep
 
 
@@ -82,7 +82,7 @@ def plot2d(representations, color_index, cfg):
     plt.legend(handles=scatter.legend_elements()[0], labels=cfg.class_elements_list, loc="best",
                bbox_to_anchor=(1, 0.5), fontsize=18)
     plt.tight_layout()
-    # plt.savefig("/home/kevindsouza/Downloads/umap_embeds.png")
+    plt.savefig("/home/kevindsouza/Downloads/umap_embeds_5_0.1.png")
     plt.show()
     print("done")
 
@@ -165,7 +165,6 @@ if __name__ == "__main__":
 
     chr_umap = True
     do_umap = False
-    do_dbscan = True
 
     if chr_umap:
         reps_tasks = np.empty((0, 2))
@@ -180,12 +179,6 @@ if __name__ == "__main__":
     if not chr_umap and do_umap:
         reps_tasks = reduce_umap(reps_tasks)
 
-    if do_dbscan:
-        labels = cluster_dbscan(reps_tasks)
-
-    if not do_dbscan:
-        plot2d(reps_tasks, colors, cfg)
-    else:
-        plot2d(reps_tasks, labels, cfg)
+    plot2d(reps_tasks, colors, cfg)
 
     print("done")
