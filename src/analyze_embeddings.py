@@ -11,11 +11,9 @@ import umap
 from utils import simple_plot
 
 
-def reduce_umap(representations, colors, cfg):
-    n_components = 2
+def reduce_umap(representations):
     umap_rep = umap.UMAP().fit_transform(representations)
-    plot2d(umap_rep, colors, cfg)
-    pass
+    return umap_rep
 
 
 def reduce_pca(representations, colors, cfg):
@@ -135,22 +133,23 @@ def plot_embed_rows(embed_rows, colors, cfg, chr):
         rand = int(random.choice(sub_df.index))
         colors.append(rand)
 
+    umap_reps = reduce_umap(embed_rows)
     # reduce_pca(embed_rows, colors, cfg)
     # plot_smoothness(embed_rows1)
     # plot_euclid_heatmap(embed_rows2)
 
-    return embed_rows, colors
+    return umap_reps, colors
 
 
 if __name__ == "__main__":
     cfg = Config()
     embed_rows = np.load("/data2/hic_lstm/downstream/predictions/embeddings_temp.npy")
     colors = []
-    embed_rows_tasks = np.empty((0, cfg.pos_embed_size))
+    umap_reps_tasks = np.empty((0, cfg.pos_embed_size))
 
     for chr in cfg.chr_train_list:
-        embed_rows_chr, colors = plot_embed_rows(embed_rows, colors, cfg, chr)
-        embed_rows_tasks = np.concatenate((embed_rows_tasks, embed_rows_chr), axis=0)
+        umap_reps_chr, colors = plot_embed_rows(embed_rows, colors, cfg, chr)
+        umap_reps_tasks = np.concatenate((umap_reps_tasks, umap_reps_chr), axis=0)
 
-    reduce_umap(embed_rows_tasks, colors, cfg)
+    plot2d(umap_reps_tasks, colors, cfg)
     print("done")
