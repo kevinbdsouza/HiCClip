@@ -145,7 +145,7 @@ def plot_embed_rows():
 
 if __name__ == "__main__":
     cfg = Config()
-    chr = 11
+    chr = 1
     cum_pos = get_cumpos(cfg, chr)
 
     plot_embed_rows()
