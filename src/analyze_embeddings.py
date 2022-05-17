@@ -119,8 +119,8 @@ def plot_euclid_heatmap(representations):
     plt.show()
 
 
-def plot_embed_rows():
-    embed_rows = np.load("/data2/hic_lstm/downstream/predictions/embeddings_temp.npy")
+def plot_embed_rows(embed_rows, colors, cfg, chr):
+    cum_pos = get_cumpos(cfg, chr)
     main_data = pd.read_csv("/data2/hic_lstm/downstream/predictions/element_data_chr%s.csv" % (chr))
     main_data["pos"] = main_data["pos"] - (cum_pos + 1)
     main_data = main_data[cfg.class_columns + ["pos"]]
@@ -129,8 +129,6 @@ def plot_embed_rows():
     embed_rows = embed_rows[main_data["pos"]]
     main_data = main_data[cfg.class_columns]
 
-    colors = []
-
     for i in range(len(main_data)):
         sub_df = main_data.loc[i]
         sub_df = sub_df[sub_df != 0]
@@ -138,15 +136,21 @@ def plot_embed_rows():
         colors.append(rand)
 
     # reduce_pca(embed_rows, colors, cfg)
-    reduce_umap(embed_rows, colors, cfg)
     # plot_smoothness(embed_rows1)
     # plot_euclid_heatmap(embed_rows2)
+
+    return embed_rows, colors
 
 
 if __name__ == "__main__":
     cfg = Config()
-    chr = 1
-    cum_pos = get_cumpos(cfg, chr)
+    embed_rows = np.load("/data2/hic_lstm/downstream/predictions/embeddings_temp.npy")
+    colors = []
+    embed_rows_tasks = np.empty((0, cfg.pos_embed_size))
 
-    plot_embed_rows()
+    for chr in cfg.chr_train_list:
+        embed_rows_chr, colors = plot_embed_rows(embed_rows, colors, cfg, chr)
+        embed_rows_tasks = np.concatenate((embed_rows_tasks, embed_rows_chr), axis=0)
+
+    reduce_umap(embed_rows_tasks, colors, cfg)
     print("done")
