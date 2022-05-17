@@ -4,13 +4,6 @@ import seaborn as sns
 
 
 def get_cumpos(cfg, chr_num):
-    """
-    get_cumpos(cfg, chr_num) -> int
-    Returns cumulative index upto the end of the previous chromosome.
-    Args:
-        cfg (Config): the configuration to use for the experiment.
-        chr_num (int): the current chromosome.
-    """
     sizes = np.load(cfg.hic_path + cfg.sizes_file, allow_pickle=True).item()
     if chr_num == 1:
         cum_pos = 0
@@ -22,14 +15,6 @@ def get_cumpos(cfg, chr_num):
 
 
 def simple_plot(hic_win, mode):
-    """
-    simple_plot(hic_win, mode) -> No return object
-    plots heatmaps of reds or differences.
-    Args:
-        hic_win (Array): Matrix of Hi-C values
-        mode (string): one of reds or diff
-    """
-
     if mode == "reds":
         plt.figure()
         sns.set_theme()

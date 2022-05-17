@@ -7,46 +7,25 @@ from config import Config
 import pandas as pd
 import random
 from matplotlib.colors import ListedColormap
+import umap
+from utils import simple_plot
 
 
-def reduce_pca(representations, colors, labels):
+def reduce_umap(representations, colors, cfg):
+    n_components = 2
+    umap_rep = umap.UMAP().fit_transform(representations)
+    pass
+
+
+def reduce_pca(representations, colors, cfg):
     n_components = 2
     pca_ob = PCA(n_components=n_components)
     pca_ob.fit(representations)
     pca_rep = pca_ob.transform(representations)
     if n_components == 3:
-        plot3d(pca_rep, colors, labels)
+        plot3d(pca_rep, colors, cfg)
     else:
-        plot2d(pca_rep, colors, labels)
-
-
-def simple_plot(hic_win, mode):
-    """
-    simple_plot(hic_win, mode) -> No return object
-    plots heatmaps of reds or differences.
-    Args:
-        hic_win (Array): Matrix of Hi-C values
-        mode (string): one of reds or diff
-    """
-
-    if mode == "reds":
-        plt.figure()
-        sns.set_theme()
-        ax = sns.heatmap(hic_win, cmap="Reds", vmin=0, vmax=1)
-        ax.set_yticks([])
-        ax.set_xticks([])
-        # plt.savefig("/home/kevindsouza/Downloads/chr21.png")
-        plt.show()
-
-    if mode == "diff":
-        plt.figure()
-        sns.set_theme()
-        rdgn = sns.diverging_palette(h_neg=220, h_pos=14, s=79, l=55, sep=3, as_cmap=True)
-        sns.heatmap(hic_win, cmap=rdgn, center=0.00, cbar=True)
-        plt.yticks([])
-        plt.xticks([])
-        # plt.savefig("/home/kevindsouza/Downloads/ctcf_ko.png")
-        plt.show()
+        plot2d(pca_rep, colors, cfg)
 
 
 def plot_smoothness(representations):
@@ -157,7 +136,8 @@ def plot_embed_rows():
         rand = int(random.choice(sub_df.index))
         colors.append(rand)
 
-    reduce_pca(embed_rows, colors, cfg)
+    # reduce_pca(embed_rows, colors, cfg)
+    reduce_umap(embed_rows, colors, cfg)
     # plot_smoothness(embed_rows1)
     # plot_euclid_heatmap(embed_rows2)
 
