@@ -14,6 +14,7 @@ from utils import simple_plot
 def reduce_umap(representations, colors, cfg):
     n_components = 2
     umap_rep = umap.UMAP().fit_transform(representations)
+    plot2d(umap_rep, colors, cfg)
     pass
 
 
