@@ -130,7 +130,7 @@ def plot_euclid_heatmap(representations):
     plt.show()
 
 
-def plot_embed_rows(embed_rows, colors, cfg, chr):
+def plot_embed_rows(embed_rows, colors, cfg, chr, chr_umap=False, chr_dbscan=False):
     cum_pos = get_cumpos(cfg, chr)
     main_data = pd.read_csv("/data2/hic_lstm/downstream/predictions/element_data_chr%s.csv" % (chr))
     main_data["pos"] = main_data["pos"] - (cum_pos + 1)
@@ -146,28 +146,55 @@ def plot_embed_rows(embed_rows, colors, cfg, chr):
         rand = int(random.choice(sub_df.index))
         colors.append(rand)
 
-    labels = None
-    embed_rows = StandardScaler().fit_transform(embed_rows)
-    # labels = cluster_dbscan(embed_rows)
-    umap_reps = reduce_umap(embed_rows)
-    # reduce_pca(embed_rows, colors, cfg)
+    reps_chr = StandardScaler().fit_transform(embed_rows)
+
+    if chr_umap:
+        reps_chr = reduce_umap(reps_chr)
+
+    if chr_dbscan:
+        labels_chr = cluster_dbscan(reps_chr)
+    else:
+        labels_chr = None
+
+        # reduce_pca(embed_rows, colors, cfg)
     # plot_smoothness(embed_rows1)
     # plot_euclid_heatmap(embed_rows2)
 
-    return umap_reps, colors, labels
+    return reps_chr, colors, labels_chr
 
 
 if __name__ == "__main__":
     cfg = Config()
     embed_rows = np.load("/data2/hic_lstm/downstream/predictions/embeddings_temp.npy")
     colors = []
-    umap_reps_tasks = np.empty((0, 2))
-    # labels = np.empty((0, 1))
+
+    chr_umap = False
+    umap = True
+    chr_dbscan = False
+    dbscan = False
+
+    if chr_umap:
+        reps_tasks = np.empty((0, 2))
+    else:
+        reps_tasks = np.empty((0, 16))
+    labels = np.empty((0, 1))
 
     for chr in cfg.chr_train_list:
-        umap_reps_chr, colors, labels_chr = plot_embed_rows(embed_rows, colors, cfg, chr)
-        umap_reps_tasks = np.concatenate((umap_reps_tasks, umap_reps_chr), axis=0)
-        # labels = np.concatenate((labels, labels_chr), axis=0)
+        reps_chr, colors, labels_chr = plot_embed_rows(embed_rows, colors, cfg, chr, chr_umap, chr_dbscan)
+        reps_tasks = np.concatenate((reps_tasks, reps_chr), axis=0)
 
-    plot2d(umap_reps_tasks, colors, cfg)
+        if chr_dbscan:
+            labels = np.concatenate((labels, labels_chr), axis=0)
+
+    if not chr_umap and umap:
+        reps_tasks = reduce_umap(reps_tasks)
+
+    if not chr_dbscan and dbscan:
+        labels_chr = cluster_dbscan(reps_tasks)
+
+    if not chr_dbscan and not dbscan:
+        plot2d(reps_tasks, colors, cfg)
+    else:
+        plot2d(reps_tasks, colors, cfg)
+        
     print("done")
