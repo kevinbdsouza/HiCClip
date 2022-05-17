@@ -145,7 +145,7 @@ if __name__ == "__main__":
     cfg = Config()
     embed_rows = np.load("/data2/hic_lstm/downstream/predictions/embeddings_temp.npy")
     colors = []
-    umap_reps_tasks = np.empty((0, cfg.pos_embed_size))
+    umap_reps_tasks = np.empty((0, 2))
 
     for chr in cfg.chr_train_list:
         umap_reps_chr, colors = plot_embed_rows(embed_rows, colors, cfg, chr)
