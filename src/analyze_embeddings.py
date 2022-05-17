@@ -9,6 +9,14 @@ import random
 from matplotlib.colors import ListedColormap
 import umap
 from utils import simple_plot
+from sklearn.cluster import DBSCAN
+from sklearn.preprocessing import StandardScaler
+
+
+def cluster_dbscan(representations):
+    cluster_model = DBSCAN().fit(representations)
+    labels = cluster_model.labels_
+    return labels
 
 
 def reduce_umap(representations):
@@ -64,14 +72,19 @@ def plot2d(representations, color_index, cfg):
         representations (Array): representation matrix
     """
 
-    plt.figure()
+    plt.figure(figsize=(12, 8))
+    plt.xticks(fontsize=18)
+    plt.yticks(fontsize=18)
     color_map = ListedColormap(cfg.colors_list)
 
     scatter = plt.scatter(representations[:, 0], representations[:, 1], c=color_index, cmap=color_map)
 
-    plt.legend(handles=scatter.legend_elements()[0], labels=cfg.class_elements_list)
+    plt.legend(handles=scatter.legend_elements()[0], labels=cfg.class_elements_list, loc="best",
+               bbox_to_anchor=(1, 0.5), fontsize=18)
     plt.tight_layout()
+    # plt.savefig("/home/kevindsouza/Downloads/umap_embeds.png")
     plt.show()
+    print("done")
 
 
 def plot3d(representations, color_index, cfg):
@@ -133,12 +146,15 @@ def plot_embed_rows(embed_rows, colors, cfg, chr):
         rand = int(random.choice(sub_df.index))
         colors.append(rand)
 
+    labels = None
+    embed_rows = StandardScaler().fit_transform(embed_rows)
+    # labels = cluster_dbscan(embed_rows)
     umap_reps = reduce_umap(embed_rows)
     # reduce_pca(embed_rows, colors, cfg)
     # plot_smoothness(embed_rows1)
     # plot_euclid_heatmap(embed_rows2)
 
-    return umap_reps, colors
+    return umap_reps, colors, labels
 
 
 if __name__ == "__main__":
@@ -146,10 +162,12 @@ if __name__ == "__main__":
     embed_rows = np.load("/data2/hic_lstm/downstream/predictions/embeddings_temp.npy")
     colors = []
     umap_reps_tasks = np.empty((0, 2))
+    # labels = np.empty((0, 1))
 
     for chr in cfg.chr_train_list:
-        umap_reps_chr, colors = plot_embed_rows(embed_rows, colors, cfg, chr)
+        umap_reps_chr, colors, labels_chr = plot_embed_rows(embed_rows, colors, cfg, chr)
         umap_reps_tasks = np.concatenate((umap_reps_tasks, umap_reps_chr), axis=0)
+        # labels = np.concatenate((labels, labels_chr), axis=0)
 
     plot2d(umap_reps_tasks, colors, cfg)
     print("done")
