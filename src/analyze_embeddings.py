@@ -169,9 +169,9 @@ if __name__ == "__main__":
     colors = []
 
     chr_umap = False
-    umap = True
+    do_umap = True
     chr_dbscan = False
-    dbscan = False
+    do_dbscan = False
 
     if chr_umap:
         reps_tasks = np.empty((0, 2))
@@ -186,15 +186,15 @@ if __name__ == "__main__":
         if chr_dbscan:
             labels = np.concatenate((labels, labels_chr), axis=0)
 
-    if not chr_umap and umap:
+    if not chr_umap and do_umap:
         reps_tasks = reduce_umap(reps_tasks)
 
-    if not chr_dbscan and dbscan:
+    if not chr_dbscan and do_dbscan:
         labels_chr = cluster_dbscan(reps_tasks)
 
-    if not chr_dbscan and not dbscan:
+    if not chr_dbscan and not do_dbscan:
         plot2d(reps_tasks, colors, cfg)
     else:
         plot2d(reps_tasks, colors, cfg)
-        
+
     print("done")
