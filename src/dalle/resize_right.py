@@ -1,6 +1,7 @@
 import warnings
 from math import ceil
 from fractions import Fraction
+import dalle.interp_methods
 
 
 class NoneClass:
