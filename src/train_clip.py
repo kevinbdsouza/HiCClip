@@ -88,7 +88,7 @@ def train_clip(device, resume, cfg):
     if not os.path.exists(cfg.save_path_clip):
         os.makedirs(cfg.save_path_clip)
 
-    epochs = cfg.wandb_clip_config.epochs
+    epochs = cfg.wandb_clip_config["epochs"]
     step = 0
     t = time.time()
 
