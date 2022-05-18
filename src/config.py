@@ -72,25 +72,25 @@ class Config:
         self.colors_list = ["C0", "C1", "C2", "C3", "C4", "C5", "C6", "C7", "C8", "C9"]
 
         "clip parameters"
-        self.dim_text = 32
-        self.dim_image = 32
-        self.dim_latent = 32
-        self.num_text_tokens = 288091
-        self.text_enc_depth = 1
-        self.text_seq_len = 100
-        self.text_heads = 4
-        self.visual_enc_depth = 1
-        self.visual_image_size = 100
-        self.visual_patch_size = 10
-        self.visual_heads = 4
-        self.use_all_token_embeds = True
-        self.decoupled_contrastive_learning = True
-        self.extra_latent_projection = True
-        self.use_visual_ssl = True
-        self.visual_ssl_type = 'simclr'
-        self.use_mlm = False
-        self.text_ssl_loss_weight = 0.05
-        self.image_ssl_loss_weight = 0.05
+        self.clip_config = {"dim_text": 32,
+                            "dim_image": 32,
+                            "dim_latent": 32,
+                            "num_text_tokens": 288091,
+                            "text_enc_depth": 1,
+                            "text_seq_len": 100,
+                            "text_heads": 4,
+                            "visual_enc_depth": 1,
+                            "visual_image_size": 100,
+                            "visual_patch_size": 10,
+                            "visual_heads": 4,
+                            "use_all_token_embeds": True,
+                            "decoupled_contrastive_learning": True,
+                            "extra_latent_projection": True,
+                            "use_visual_ssl": True,
+                            "visual_ssl_type": 'simclr',
+                            "use_mlm": False,
+                            "text_ssl_loss_weight": 0.05,
+                            "image_ssl_loss_weight": 0.05}
         self.clip_batch_size = 200
         self.wandb_clip_config = {"learning_rate": 1.1e-4,
                                   "architecture": "clip",

@@ -54,42 +54,41 @@ def eval_model(model, device, maps_batched, pos_batched, phase="Validation"):
 def train_clip(device, resume, cfg):
     """Train Clip model"""
 
-    clip = CLIP(
-        dim_text=cfg.dim_text,
-        dim_image=cfg.dim_image,
-        dim_latent=cfg.dim_latent,
-        num_text_tokens=cfg.num_text_tokens,
-        text_enc_depth=cfg.text_enc_depth,
-        text_seq_len=cfg.text_seq_len,
-        text_heads=cfg.text_heads,
-        visual_enc_depth=cfg.visual_enc_depth,
-        visual_image_size=cfg.visual_image_size,
-        visual_patch_size=cfg.visual_patch_size,
-        visual_heads=cfg.visual_heads,
-        use_all_token_embeds=cfg.use_all_token_embeds,
-        decoupled_contrastive_learning=cfg.decoupled_contrastive_learning,
-        extra_latent_projection=cfg.extra_latent_projection,
-        use_visual_ssl=cfg.use_visual_ssl,
-        visual_ssl_type=cfg.visual_ssl_type,
-        use_mlm=cfg.use_mlm,
-        text_ssl_loss_weight=cfg.text_ssl_loss_weight,
-        image_ssl_loss_weight=cfg.image_ssl_loss_weight).to(device)
-
-    # Load pre-trained model from DPRIOR_PATH
+    "load pre-trained model from DPRIOR_PATH"
     if resume:
-        clip = load_clip_model(cfg.pretrained_clip_model_path, device)
+        clip, optimizer, scaler = load_clip_model(cfg.pretrained_clip_model_path, device)
         wandb.init(entity=cfg.wandb_clip_entity, project=cfg.wandb_clip_project, config=cfg.wandb_clip_config)
+    else:
+        clip = CLIP(
+            dim_text=cfg.clip_config["dim_text"],
+            dim_image=cfg.clip_config["dim_image"],
+            dim_latent=cfg.clip_config["dim_latent"],
+            num_text_tokens=cfg.clip_config["num_text_tokens"],
+            text_enc_depth=cfg.clip_config["text_enc_depth"],
+            text_seq_len=cfg.clip_config["text_seq_len"],
+            text_heads=cfg.clip_config["text_heads"],
+            visual_enc_depth=cfg.clip_config["visual_enc_depth"],
+            visual_image_size=cfg.clip_config["visual_image_size"],
+            visual_patch_size=cfg.clip_config["visual_patch_size"],
+            visual_heads=cfg.clip_config["visual_heads"],
+            use_all_token_embeds=cfg.clip_config["use_all_token_embeds"],
+            decoupled_contrastive_learning=cfg.clip_config["decoupled_contrastive_learning"],
+            extra_latent_projection=cfg.clip_config["extra_latent_projection"],
+            use_visual_ssl=cfg.clip_config["use_visual_ssl"],
+            visual_ssl_type=cfg.clip_config["visual_ssl_type"],
+            use_mlm=cfg.clip_config["use_mlm"],
+            text_ssl_loss_weight=cfg.clip_config["text_ssl_loss_weight"],
+            image_ssl_loss_weight=cfg.clip_config["image_ssl_loss_weight"]).to(device)
 
-    # Create save_path if it doesn't exist
+        scaler = GradScaler(enabled=cfg.amp)
+        optimizer = get_optimizer(clip.parameters(), wd=cfg.wandb_clip_config["weight_decay"],
+                                  lr=cfg.wandb_clip_config["learning_rate"])
+
+    "create save_path if it doesn't exist"
     if not os.path.exists(cfg.save_path_clip):
         os.makedirs(cfg.save_path_clip)
 
-    ### Training code ###
-    scaler = GradScaler(enabled=cfg.amp)
-    optimizer = get_optimizer(clip.parameters(), wd=cfg.wandb_clip_config.weight_decay,
-                              lr=cfg.wandb_clip_config.learning_rate)
     epochs = cfg.wandb_clip_config.epochs
-
     step = 0
     t = time.time()
 
@@ -116,13 +115,13 @@ def train_clip(device, resume, cfg):
 
                 "samples per second"
                 step += 1
-                samples_per_sec = cfg.wandb_clip_config.batch_size * step / (time.time() - t)
+                samples_per_sec = cfg.wandb_clip_config["batch_size"] * step / (time.time() - t)
 
                 "save checkpoint every save_interval minutes"
                 if (int(time.time() - t) >= 60 * cfg.save_interval):
                     t = time.time()
 
-                    save_clip_model(cfg.save_path_clip, clip, optimizer, scaler, cfg.wandb_clip_config)
+                    save_clip_model(cfg.save_path_clip, clip, optimizer, scaler, cfg.clip_config)
 
                 "log to wandb"
                 wandb.log({"Training loss": loss.item(),
@@ -133,7 +132,7 @@ def train_clip(device, resume, cfg):
                     eval_model(clip, device, eval_maps, eval_pos, phase="Validation")
 
                 scaler.unscale_(optimizer)
-                nn.utils.clip_grad_norm_(clip.parameters(), cfg.wandb_clip_config.max_gradient_clipping_norm)
+                nn.utils.clip_grad_norm_(clip.parameters(), cfg.wandb_clip_config["max_gradient_clipping_norm"])
 
                 scaler.step(optimizer)
                 scaler.update()

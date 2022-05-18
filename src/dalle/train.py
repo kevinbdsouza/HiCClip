@@ -116,14 +116,16 @@ def load_clip_model(dprior_path, device):
     loaded_obj = torch.load(str(dprior_path), map_location='cpu')
 
     # Get hyperparameters of loaded model
-    clip_config = loaded_obj['hparams']['clip_network']
+    clip_config = loaded_obj['hparams']['config']
+    optimizer = loaded_obj['hparams']['optimizer']
+    scaler = loaded_obj['hparams']['scaler']
 
     # DiffusionPrior with text embeddings and image embeddings pre-computed
     clip = CLIP(**clip_config).to(device)
 
     # Load state dict from saved model
     clip.load_state_dict(loaded_obj['model'])
-    return clip
+    return clip, optimizer, scaler
 
 
 def save_clip_model(save_path, model, optimizer, scaler, config):
