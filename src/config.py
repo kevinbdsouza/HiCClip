@@ -86,7 +86,7 @@ class Config:
                             "use_all_token_embeds": True,
                             "decoupled_contrastive_learning": True,
                             "extra_latent_projection": True,
-                            "use_visual_ssl": True,
+                            "use_visual_ssl": False,
                             "visual_ssl_type": 'simclr',
                             "use_mlm": False,
                             "text_ssl_loss_weight": 0.05,
