@@ -45,7 +45,7 @@ class BatchHiCLSTMEmbeddings():
         embed_rows = self.load_embeddings()
         embed_rows = embed_rows[self.cumpos + 1:self.cumpos_next]
 
-        seq_len = self.cfg.text_seq_len
+        seq_len = int(self.cfg.text_seq_len/2)
         fill_length = seq_len - (len(embed_rows) % seq_len)
         fill = np.zeros((fill_length, 16))
         embed_rows = np.vstack((embed_rows, fill))
@@ -110,7 +110,7 @@ class BatchHiCMaps():
 
     def batch_hic_maps(self, batch_size):
         hic_mat = self.load_hic()
-        seq_len = self.cfg.text_seq_len
+        seq_len = int(self.cfg.text_seq_len/2)
         num_seqs = int(self.hic_size / seq_len)
 
         hic_input = []

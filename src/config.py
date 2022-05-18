@@ -77,7 +77,7 @@ class Config:
                             "dim_latent": 32,
                             "num_text_tokens": 288091,
                             "text_enc_depth": 1,
-                            "text_seq_len": 100,
+                            "text_seq_len": 200,
                             "text_heads": 4,
                             "visual_enc_depth": 1,
                             "visual_image_size": 100,
