@@ -106,7 +106,7 @@ def train_clip(device, resume, cfg):
 
                 clip.train()
 
-                pairpos_tensor = torch.tensor(pairpos).to(device)
+                pairpos_tensor = torch.tensor(pairpos).double().to(device)
                 maps_tensor = torch.tensor(maps).unsqueeze(1).to(device)
 
                 with autocast(enabled=cfg.amp):
