@@ -72,9 +72,9 @@ class Config:
         self.colors_list = ["C0", "C1", "C2", "C3", "C4", "C5", "C6", "C7", "C8", "C9"]
 
         "clip parameters"
-        self.clip_config = {"dim_text": 32,
-                            "dim_image": 32,
-                            "dim_latent": 32,
+        self.clip_config = {"dim_text": 16,
+                            "dim_image": 16,
+                            "dim_latent": 16,
                             "num_text_tokens": 288091,
                             "text_enc_depth": 1,
                             "text_seq_len": 200,
