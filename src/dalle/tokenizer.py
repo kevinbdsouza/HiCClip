@@ -55,7 +55,10 @@ def whitespace_clean(text):
 
 
 class SimpleTokenizer(object):
-    def __init__(self, bpe_path=default_bpe()):
+    def __init__(self):
+        pass
+
+    def initialize(self, bpe_path=default_bpe()):
         self.byte_encoder = bytes_to_unicode()
         self.byte_decoder = {v: k for k, v in self.byte_encoder.items()}
         merges = Path(bpe_path).read_text(encoding='utf8').split('\n')
