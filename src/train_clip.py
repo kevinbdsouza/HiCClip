@@ -1,6 +1,4 @@
 import os
-import math
-import argparse
 import numpy as np
 import time
 from tqdm import tqdm
@@ -8,10 +6,9 @@ from config import Config
 import wandb
 import torch
 from torch import nn
-from embedding_reader import EmbeddingReader
-from dalle2.dalle2_pytorch.dalle2_pytorch import CLIP
-from dalle2.dalle2_pytorch.train import load_clip_model, save_clip_model, print_ribbon
-from dalle2.dalle2_pytorch.optimizer import get_optimizer
+from dalle2.dalle2_pytorch import CLIP
+from dalle2.train import load_clip_model, save_clip_model
+from dalle2.optimizer import get_optimizer
 from torch.cuda.amp import autocast, GradScaler
 
 os.environ["WANDB_SILENT"] = "true"
@@ -106,7 +103,7 @@ def train_clip(device, resume, cfg):
             train_pos, train_maps, eval_pos, eval_maps, test_pos, test_maps = train_test_eval_split(pairpos_batched,
                                                                                                     maps_batched)
 
-            for pairpos, maps in zip(train_pos, train_maps):
+            for pairpos, maps in tqdm(zip(train_pos, train_maps)):
 
                 clip.train()
 
