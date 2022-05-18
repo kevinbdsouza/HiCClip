@@ -1,8 +1,6 @@
 from config import Config
-import torch
 from dalle2.train_diffusion_prior import train_diffusion_call
-from dalle2.train_clip import train_clip_call
-from dalle2.dalle2_pytorch.dalle2_pytorch import DALLE2, Unet, Decoder
+from train_clip import train_clip_call
 
 
 def train_clip():
