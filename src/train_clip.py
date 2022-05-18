@@ -6,7 +6,7 @@ from config import Config
 import wandb
 import torch
 from torch import nn
-from dalle.dalle2_pytorch import CLIP
+from x_clip import CLIP
 from dalle.train import load_clip_model, save_clip_model
 from dalle.optimizer import get_optimizer
 from torch.cuda.amp import autocast, GradScaler
@@ -110,7 +110,7 @@ def train_clip(device, resume, cfg):
                 maps_tensor = torch.tensor(maps).to(device)
 
                 with autocast(enabled=cfg.amp):
-                    loss = clip(text_embed=pairpos_tensor, image_embed=maps_tensor)
+                    loss = clip(pairpos_tensor, maps_tensor, freeze_image_encoder=False, return_loss=True)
                     scaler.scale(loss).backward()
 
                 "samples per second"
