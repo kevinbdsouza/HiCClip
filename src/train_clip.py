@@ -154,7 +154,8 @@ def train_clip_call():
         wandb.init(
             entity=cfg.wandb_clip_entity,
             project=cfg.wandb_clip_project,
-            config=cfg.wandb_clip_config)
+            config=cfg.wandb_clip_config,
+            mode="disabled")
 
     device = "cpu"
     has_cuda = torch.cuda.is_available()
