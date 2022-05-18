@@ -1,5 +1,5 @@
 from config import Config
-from dalle2.train_diffusion_prior import train_diffusion_call
+from dalle.train_diffusion_prior import train_diffusion_call
 from train_clip import train_clip_call
 
 

@@ -6,9 +6,9 @@ from config import Config
 import wandb
 import torch
 from torch import nn
-from dalle2.dalle2_pytorch import CLIP
-from dalle2.train import load_clip_model, save_clip_model
-from dalle2.optimizer import get_optimizer
+from dalle.dalle2_pytorch import CLIP
+from dalle.train import load_clip_model, save_clip_model
+from dalle.optimizer import get_optimizer
 from torch.cuda.amp import autocast, GradScaler
 
 os.environ["WANDB_SILENT"] = "true"
