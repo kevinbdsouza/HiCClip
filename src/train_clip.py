@@ -16,7 +16,8 @@ os.environ["WANDB_SILENT"] = "true"
 
 
 def shuffle_pos_maps(pairpos_batched, maps_batched):
-    return pairpos_batched, maps_batched
+    ind = np.random.permutation(pairpos_batched.shape[0])
+    return pairpos_batched[ind, :, :, :], maps_batched[ind, :, :, :]
 
 
 def eval_model(model, device, maps_batched, pos_batched, phase="Validation"):
