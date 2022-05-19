@@ -95,11 +95,11 @@ class Config:
                             "text_ssl_loss_weight": 0,
                             "image_ssl_loss_weight": 0}
         self.clip_batch_size = 50
-        self.wandb_clip_config = {"learning_rate": 1.1e-4,
+        self.wandb_clip_config = {"learning_rate": 1.1e-3,
                                   "architecture": "clip",
                                   "dataset": "hic",
                                   "weight_decay": 6.02e-2,
-                                  "max_gradient_clipping_norm": 0.5,
+                                  "max_gradient_clipping_norm": 5,
                                   "batch_size": self.clip_batch_size,
                                   "epochs": 10}
         self.wandb_clip_entity = "clip_ob"
