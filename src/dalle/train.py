@@ -115,24 +115,28 @@ def load_clip_model(dprior_path, device):
     loaded_obj = torch.load(dprior_path, map_location='cpu')
 
     # Get hyperparameters of loaded model
-    clip_config = loaded_obj['hparams']
-    optimizer = loaded_obj['optimizer']
+    clip_config = loaded_obj['clip_config']
+    cfg = loaded_obj['exp_config']
 
     # DiffusionPrior with text embeddings and image embeddings pre-computed
     clip = CLIP(**clip_config).to(device)
+    optimizer = get_optimizer(clip.parameters(), wd=cfg.wandb_clip_config["weight_decay"],
+                              lr=cfg.wandb_clip_config["learning_rate"])
 
     # Load state dict from saved model
     clip.load_state_dict(loaded_obj['model'])
-    return clip, optimizer
+    optimizer.load_state_dict(loaded_obj['optimizer'])
+    return clip, optimizer, cfg
 
 
-def save_clip_model(save_path, model, optimizer, config):
+def save_clip_model(save_path, model, optimizer, config, clip_config):
     # Saving State Dict
     print('Saving checkpoint')
 
     state_dict = dict(model=model.state_dict(),
-                      optimizer=optimizer,
-                      hparams=config)
+                      optimizer=optimizer.state_dict(),
+                      clip_config=clip_config,
+                      exp_config=config)
     torch.save(state_dict, save_path + '/' + str(time.time()) + '_saved_model.pth')
 
 

@@ -59,7 +59,7 @@ def train_clip(device, resume, cfg):
 
     "load pre-trained model from DPRIOR_PATH"
     if resume:
-        clip, optimizer = load_clip_model(cfg.pretrained_clip_model_path, device)
+        clip, optimizer, cfg = load_clip_model(cfg.pretrained_clip_model_path, device)
         wandb.init(entity=cfg.wandb_clip_entity, project=cfg.wandb_clip_project, config=cfg.wandb_clip_config,
                    mode="disabled")
     else:
@@ -127,7 +127,7 @@ def train_clip(device, resume, cfg):
                 if (step % cfg.report_metrics_every) == 0:
                     eval_loss = eval_model(clip, device, eval_maps, eval_pos, phase="Validation")
                     print("eval loss: %s" % (eval_loss))
-                    save_clip_model(cfg.save_path_clip, clip, optimizer, cfg.clip_config)
+                    save_clip_model(cfg.save_path_clip, clip, optimizer, cfg, cfg.clip_config)
 
                 scaler.unscale_(optimizer)
                 nn.utils.clip_grad_norm_(clip.parameters(), cfg.wandb_clip_config["max_gradient_clipping_norm"])
@@ -145,7 +145,7 @@ def train_clip(device, resume, cfg):
 def train_clip_call():
     cfg = Config()
 
-    resume = True
+    resume = False
 
     if not resume:
         wandb.init(
