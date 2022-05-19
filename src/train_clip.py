@@ -144,11 +144,9 @@ def train_clip(device, resume, cfg):
 def train_clip_call():
     cfg = Config()
 
-    resume = True
+    resume = False
 
-    if (cfg.pretrained_clip_model_path is not None):
-        resume = True
-    else:
+    if not resume:
         wandb.init(
             entity=cfg.wandb_clip_entity,
             project=cfg.wandb_clip_project,

@@ -132,8 +132,8 @@ def save_clip_model(save_path, model, optimizer, scaler, config):
     print('Saving checkpoint')
 
     state_dict = dict(model=model.state_dict(),
-                      optimizer=optimizer.state_dict(),
-                      scaler=scaler.state_dict(),
+                      optimizer=optimizer,
+                      scaler=scaler,
                       hparams=config)
     torch.save(state_dict, save_path + '/' + str(time.time()) + '_saved_model.pth')
 
