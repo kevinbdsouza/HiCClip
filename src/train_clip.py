@@ -37,12 +37,12 @@ def eval_model(model, device, maps_batched, pos_batched, phase="Validation"):
         total_samples = 0.
 
         for maps, pos in zip(maps_batched, pos_batched):
-            maps_tensor = torch.tensor(maps).to(device)
-            pos_tensor = torch.tensor(pos).to(device)
+            pos_tensor = torch.tensor(np.array(pos)).to(device)
+            maps_tensor = torch.tensor(np.array(maps)).to(device)
 
             batch_samples = maps_tensor.shape[0]
 
-            loss = model(text_embed=pos_tensor, image_embed=maps_tensor)
+            loss = model(pos_tensor, maps_tensor, freeze_image_encoder=False, return_loss=True)
 
             total_loss += loss.item() * batch_samples
             total_samples += batch_samples
