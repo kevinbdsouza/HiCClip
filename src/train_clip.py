@@ -124,7 +124,7 @@ def train_clip(device, resume, cfg):
                 "eval and save checkpoint"
                 if (step % cfg.report_metrics_every) == 0:
                     eval_loss = eval_model(clip, device, eval_maps, eval_pos, phase="Validation")
-                    print("eval loss train: %s, eval: %s" % (loss, eval_loss))
+                    print("eval loss: %s" % (eval_loss))
                     save_clip_model(cfg.save_path_clip, clip, optimizer, scaler, cfg.clip_config)
 
                 scaler.unscale_(optimizer)
