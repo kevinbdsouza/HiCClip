@@ -96,8 +96,8 @@ def train_clip(device, resume, cfg):
 
         for chr in cfg.chr_train_list:
 
-            pairpos_batched = np.load(cfg.batched_hic_path + "embed_%s.npy" % chr)
-            maps_batched = np.load(cfg.batched_hic_path + "hic_%s.npy" % chr)
+            pairpos_batched = np.load(cfg.batched_hic_path + "embed_%s.npy" % chr, allow_pickle=True)
+            maps_batched = np.load(cfg.batched_hic_path + "hic_%s.npy" % chr, allow_pickle=True)
 
             train_pos, train_maps, eval_pos, eval_maps, test_pos, test_maps = train_test_eval_split(pairpos_batched,
                                                                                                     maps_batched)
