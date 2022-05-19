@@ -115,19 +115,15 @@ def train_clip(device, resume, cfg):
                 step += 1
                 samples_per_sec = cfg.wandb_clip_config["batch_size"] * step / (time.time() - t)
 
-                "save checkpoint every save_interval minutes"
-                #if (int(time.time() - t) >= 60 * cfg.save_interval):
-                #    t = time.time()
-
-                save_clip_model(cfg.save_path_clip, clip, optimizer, scaler, cfg.clip_config)
-
                 "log to wandb"
                 wandb.log({"Training loss": loss.item(),
                            "Steps": step,
                            "Samples per second": samples_per_sec})
 
+                "eval and save checkpoint"
                 if (step % cfg.report_metrics_every) == 0:
                     eval_model(clip, device, eval_maps, eval_pos, phase="Validation")
+                    save_clip_model(cfg.save_path_clip, clip, optimizer, scaler, cfg.clip_config)
 
                 scaler.unscale_(optimizer)
                 nn.utils.clip_grad_norm_(clip.parameters(), cfg.wandb_clip_config["max_gradient_clipping_norm"])
