@@ -93,11 +93,14 @@ def train_clip(device, resume, cfg):
             pairpos_batched = np.load(cfg.batched_hic_path + "embed_%s.npy" % chr, allow_pickle=True)
             maps_batched = np.load(cfg.batched_hic_path + "hic_%s.npy" % chr, allow_pickle=True)
 
-            ind = np.random.permutation(pairpos_batched.shape[0])
-            pairpos_batched, maps_batched = pairpos_batched[ind, :, :, :], maps_batched[ind, :, :, :]
+            batch_indices = np.random.permutation(pairpos_batched.shape[0])
 
-            for pairpos, maps in tqdm(zip(pairpos_batched, maps_batched)):
-                pairpos, maps = shuffle_pos_maps(pairpos, maps)
+            for batch_indice in tqdm(batch_indices):
+                pairpos = pairpos_batched[batch_indice]
+                maps = maps_batched[batch_indice]
+
+                sample_indices = np.random.permutation(pairpos.shape[0])
+                pairpos, maps = pairpos[sample_indices, :, :],  maps[sample_indices, :, :]
 
                 pairpos_tensor = torch.tensor(np.array(pairpos)).to(device)
                 maps_tensor = torch.tensor(np.array(maps)).unsqueeze(1).to(device)
