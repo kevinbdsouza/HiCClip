@@ -33,3 +33,19 @@ def simple_plot(hic_win, mode):
         plt.xticks([])
         # plt.savefig("/home/kevindsouza/Downloads/ctcf_ko.png")
         plt.show()
+
+
+def train_test_eval_split(pairpos_batched, maps_batched):
+    total_batches = len(maps_batched)
+    train_batches = int(0.7 * total_batches)
+    eval_batches = int(0.2 * total_batches)
+
+    train_pos = pairpos_batched[:train_batches]
+    train_maps = maps_batched[:train_batches]
+
+    eval_pos = pairpos_batched[train_batches:train_batches + eval_batches]
+    eval_maps = maps_batched[train_batches:train_batches + eval_batches]
+
+    test_pos = pairpos_batched[train_batches + eval_batches:]
+    test_maps = maps_batched[train_batches + eval_batches:]
+    return train_pos, train_maps, eval_pos, eval_maps, test_pos, test_maps

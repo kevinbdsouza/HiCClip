@@ -10,24 +10,13 @@ from x_clip import CLIP
 from dalle.train import load_clip_model, save_clip_model
 from dalle.optimizer import get_optimizer
 from torch.cuda.amp import autocast, GradScaler
+from utils import train_test_eval_split
 
 os.environ["WANDB_SILENT"] = "true"
 
 
-def train_test_eval_split(pairpos_batched, maps_batched):
-    total_batches = len(maps_batched)
-    train_batches = int(0.7 * total_batches)
-    eval_batches = int(0.2 * total_batches)
-
-    train_pos = pairpos_batched[:train_batches]
-    train_maps = maps_batched[:train_batches]
-
-    eval_pos = pairpos_batched[train_batches:train_batches + eval_batches]
-    eval_maps = maps_batched[train_batches:train_batches + eval_batches]
-
-    test_pos = pairpos_batched[train_batches + eval_batches:]
-    test_maps = maps_batched[train_batches + eval_batches:]
-    return train_pos, train_maps, eval_pos, eval_maps, test_pos, test_maps
+def shuffle_pos_maps(pairpos_batched, maps_batched):
+    return pairpos_batched, maps_batched
 
 
 def eval_model(model, device, maps_batched, pos_batched, phase="Validation"):
@@ -97,15 +86,17 @@ def train_clip(device, resume, cfg):
     clip.train()
     for _ in range(epochs):
 
-        for chr in cfg.chr_train_list:
+        for chr in cfg.chr_train_list_shuff:
+            print('Training chr %s' % chr)
 
             pairpos_batched = np.load(cfg.batched_hic_path + "embed_%s.npy" % chr, allow_pickle=True)
             maps_batched = np.load(cfg.batched_hic_path + "hic_%s.npy" % chr, allow_pickle=True)
 
-            train_pos, train_maps, eval_pos, eval_maps, test_pos, test_maps = train_test_eval_split(pairpos_batched,
-                                                                                                    maps_batched)
+            pairpos_batched, maps_batched = shuffle_pos_maps(pairpos_batched, maps_batched)
 
-            for pairpos, maps in tqdm(zip(train_pos, train_maps)):
+            for pairpos, maps in tqdm(zip(pairpos_batched, maps_batched)):
+                pairpos, maps = shuffle_pos_maps(pairpos, maps)
+
                 pairpos_tensor = torch.tensor(np.array(pairpos)).to(device)
                 maps_tensor = torch.tensor(np.array(maps)).unsqueeze(1).to(device)
 
@@ -122,10 +113,9 @@ def train_clip(device, resume, cfg):
                            "Steps": step,
                            "Samples per second": samples_per_sec})
 
-                "eval and save checkpoint"
+                "save checkpoint"
                 if (step % cfg.report_metrics_every) == 0:
-                    eval_loss = eval_model(clip, device, eval_maps, eval_pos, phase="Validation")
-                    print("eval loss: %s" % (eval_loss))
+                    print("training loss: %s" % (loss))
                     save_clip_model(clip, cfg, cfg.clip_config)
 
                 scaler.unscale_(optimizer)
@@ -135,8 +125,10 @@ def train_clip(device, resume, cfg):
                 scaler.update()
                 optimizer.zero_grad()
 
-            "Test run"
-            test_loss = eval_model(clip, device, test_maps, test_pos, phase="Test")
+            "Eval run"
+            eval_maps = None
+            eval_pos = None
+            test_loss = eval_model(clip, device, eval_maps, eval_pos, phase="Validationn")
             print("test loss %s: %s" % (chr, test_loss))
     return clip
 

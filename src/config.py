@@ -16,6 +16,7 @@ class Config:
         self.cell = "GM12878"
         self.chr_train_list = list(range(2, 23))
         self.chr_test_list = list(range(22, 23))
+        self.chr_train_list_shuff = [1, 22, 2, 11, 16, 3, 8, 21, 7, 4, 12, 20, 5, 10, 19, 6, 18, 9, 13, 17, 14, 15]
         self.save_processed_data = False
 
         "fasta"
@@ -101,6 +102,7 @@ class Config:
                                   "epochs": 10}
         self.wandb_clip_entity = "clip_ob"
         self.wandb_clip_project = "clip"
+        self.num_eval_batches = 5
         self.clip_model_name = "clip_try.pth"
         self.pretrained_clip_model_path = "./clip_checkpoints/" + self.clip_model_name
         self.save_path_clip = "./clip_checkpoints/"

@@ -127,9 +127,6 @@ def load_clip_model(dprior_path, device):
 
 
 def save_clip_model(model, config, clip_config):
-    # Saving State Dict
-    print('Saving checkpoint')
-
     state_dict = dict(model=model.state_dict(),
                       clip_config=clip_config,
                       exp_config=config)
