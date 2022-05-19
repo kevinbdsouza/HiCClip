@@ -130,7 +130,7 @@ def load_clip_model(dprior_path, device):
 
 def save_clip_model(save_path, model, optimizer, scaler, config):
     # Saving State Dict
-    print_ribbon('Saving checkpoint')
+    print('Saving checkpoint')
 
     state_dict = dict(model=model.state_dict(),
                       optimizer=optimizer.state_dict(),
