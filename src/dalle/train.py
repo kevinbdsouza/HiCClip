@@ -120,21 +120,17 @@ def load_clip_model(dprior_path, device):
 
     # DiffusionPrior with text embeddings and image embeddings pre-computed
     clip = CLIP(**clip_config).to(device)
-    optimizer = get_optimizer(clip.parameters(), wd=cfg.wandb_clip_config["weight_decay"],
-                              lr=cfg.wandb_clip_config["learning_rate"])
 
     # Load state dict from saved model
     clip.load_state_dict(loaded_obj['model'])
-    optimizer.load_state_dict(loaded_obj['optimizer'])
-    return clip, optimizer, cfg
+    return clip, cfg
 
 
-def save_clip_model(model, optimizer, config, clip_config):
+def save_clip_model(model, config, clip_config):
     # Saving State Dict
     print('Saving checkpoint')
 
     state_dict = dict(model=model.state_dict(),
-                      optimizer=optimizer.state_dict(),
                       clip_config=clip_config,
                       exp_config=config)
     torch.save(state_dict, config.save_path_clip + config.clip_model_name)

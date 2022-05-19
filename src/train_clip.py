@@ -55,11 +55,9 @@ def eval_model(model, device, maps_batched, pos_batched, phase="Validation"):
 def train_clip(device, resume, cfg):
     """Train Clip model"""
 
-    scaler = GradScaler(enabled=cfg.amp)
-
     "load pre-trained model from DPRIOR_PATH"
     if resume:
-        clip, optimizer, cfg = load_clip_model(cfg.pretrained_clip_model_path, device)
+        clip, cfg = load_clip_model(cfg.pretrained_clip_model_path, device)
         wandb.init(entity=cfg.wandb_clip_entity, project=cfg.wandb_clip_project, config=cfg.wandb_clip_config,
                    mode="disabled")
     else:
@@ -84,8 +82,9 @@ def train_clip(device, resume, cfg):
             text_ssl_loss_weight=cfg.clip_config["text_ssl_loss_weight"],
             image_ssl_loss_weight=cfg.clip_config["image_ssl_loss_weight"]).to(device)
 
-        optimizer = get_optimizer(clip.parameters(), wd=cfg.wandb_clip_config["weight_decay"],
-                                  lr=cfg.wandb_clip_config["learning_rate"])
+    scaler = GradScaler(enabled=cfg.amp)
+    optimizer = get_optimizer(clip.parameters(), wd=cfg.wandb_clip_config["weight_decay"],
+                              lr=cfg.wandb_clip_config["learning_rate"])
 
     "create save_path if it doesn't exist"
     if not os.path.exists(cfg.save_path_clip):
@@ -127,7 +126,7 @@ def train_clip(device, resume, cfg):
                 if (step % cfg.report_metrics_every) == 0:
                     eval_loss = eval_model(clip, device, eval_maps, eval_pos, phase="Validation")
                     print("eval loss: %s" % (eval_loss))
-                    save_clip_model(clip, optimizer, cfg, cfg.clip_config)
+                    save_clip_model(clip, cfg, cfg.clip_config)
 
                 scaler.unscale_(optimizer)
                 nn.utils.clip_grad_norm_(clip.parameters(), cfg.wandb_clip_config["max_gradient_clipping_norm"])
@@ -145,7 +144,7 @@ def train_clip(device, resume, cfg):
 def train_clip_call():
     cfg = Config()
 
-    resume = True
+    resume = False
 
     if not resume:
         wandb.init(
