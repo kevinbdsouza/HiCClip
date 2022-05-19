@@ -16,7 +16,7 @@ class Config:
         self.cell = "GM12878"
         self.chr_train_list = list(range(1, 23))
         self.chr_test_list = list(range(22, 23))
-        self.chr_train_list_shuff = random.shuffle(self.chr_train_list)
+        self.chr_train_list_shuff = random.shuffle(self.chr_train_list.copy())
         self.save_processed_data = False
 
         "fasta"
