@@ -89,8 +89,8 @@ class Config:
                             "use_visual_ssl": False,
                             "visual_ssl_type": 'simclr',
                             "use_mlm": False,
-                            "text_ssl_loss_weight": 0.05,
-                            "image_ssl_loss_weight": 0.05}
+                            "text_ssl_loss_weight": 0,
+                            "image_ssl_loss_weight": 0}
         self.clip_batch_size = 100
         self.wandb_clip_config = {"learning_rate": 1.1e-4,
                                   "architecture": "clip",
