@@ -84,7 +84,7 @@ def train_clip(device, resume, cfg):
         for chr in cfg.chr_train_list_shuff:
             print('Training chr %s' % chr)
 
-            chr = 20
+            chr = 22
             pairpos_batched = np.load(cfg.batched_hic_path + "embed_%s.npy" % chr, allow_pickle=True)
             maps_batched = np.load(cfg.batched_hic_path + "hic_%s.npy" % chr, allow_pickle=True)
 
