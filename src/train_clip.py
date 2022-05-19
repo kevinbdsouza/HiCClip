@@ -58,7 +58,8 @@ def train_clip(device, resume, cfg):
     "load pre-trained model from DPRIOR_PATH"
     if resume:
         clip, optimizer, scaler = load_clip_model(cfg.pretrained_clip_model_path, device)
-        wandb.init(entity=cfg.wandb_clip_entity, project=cfg.wandb_clip_project, config=cfg.wandb_clip_config)
+        wandb.init(entity=cfg.wandb_clip_entity, project=cfg.wandb_clip_project, config=cfg.wandb_clip_config,
+                   mode="disabled")
     else:
         clip = CLIP(
             dim_text=cfg.clip_config["dim_text"],
@@ -143,7 +144,7 @@ def train_clip(device, resume, cfg):
 def train_clip_call():
     cfg = Config()
 
-    resume = False
+    resume = True
 
     if (cfg.pretrained_clip_model_path is not None):
         resume = True

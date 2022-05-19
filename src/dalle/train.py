@@ -113,7 +113,7 @@ def print_ribbon(s, symbol='=', repeat=40):
 # for diffusion prior
 def load_clip_model(dprior_path, device):
     assert dprior_path.exists(), 'Dprior model file does not exist'
-    loaded_obj = torch.load(str(dprior_path), map_location='cpu')
+    loaded_obj = torch.load(dprior_path, map_location='cpu')
 
     # Get hyperparameters of loaded model
     clip_config = loaded_obj['hparams']['config']
