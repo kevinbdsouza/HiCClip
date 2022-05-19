@@ -145,7 +145,7 @@ def train_clip(device, resume, cfg):
 def train_clip_call():
     cfg = Config()
 
-    resume = False
+    resume = True
 
     if not resume:
         wandb.init(
