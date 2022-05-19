@@ -98,7 +98,7 @@ class Config:
                                   "weight_decay": 6.02e-2,
                                   "max_gradient_clipping_norm": 0.5,
                                   "batch_size": self.clip_batch_size,
-                                  "epochs": 5}
+                                  "epochs": 10}
         self.wandb_clip_entity = "clip_ob"
         self.wandb_clip_project = "clip"
         self.pretrained_clip_model_path = None

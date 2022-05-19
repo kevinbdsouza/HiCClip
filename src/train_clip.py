@@ -49,6 +49,7 @@ def eval_model(model, device, maps_batched, pos_batched, phase="Validation"):
 
         avg_loss = (total_loss / total_samples)
         wandb.log({f'{phase}': avg_loss})
+    return avg_loss
 
 
 def train_clip(device, resume, cfg):
@@ -122,7 +123,8 @@ def train_clip(device, resume, cfg):
 
                 "eval and save checkpoint"
                 if (step % cfg.report_metrics_every) == 0:
-                    eval_model(clip, device, eval_maps, eval_pos, phase="Validation")
+                    eval_loss = eval_model(clip, device, eval_maps, eval_pos, phase="Validation")
+                    print("eval loss train: %s, eval: %s" % (loss, eval_loss))
                     save_clip_model(cfg.save_path_clip, clip, optimizer, scaler, cfg.clip_config)
 
                 scaler.unscale_(optimizer)
@@ -133,7 +135,8 @@ def train_clip(device, resume, cfg):
                 optimizer.zero_grad()
 
             "Test run"
-            eval_model(clip, device, test_maps, test_pos, phase="Test")
+            test_loss = eval_model(clip, device, test_maps, test_pos, phase="Test")
+            print("test loss %s: %s" % (chr, test_loss))
     return clip
 
 
