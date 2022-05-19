@@ -89,7 +89,7 @@ def train_clip(device, resume, cfg):
 
             batch_indices = np.random.permutation(pairpos_batched.shape[0])
 
-            for batch_indice in tqdm(batch_indices):
+            for batch_indice in batch_indices:
                 pairpos = np.array(pairpos_batched[batch_indice])
                 maps = np.array(maps_batched[batch_indice])
 
@@ -114,7 +114,7 @@ def train_clip(device, resume, cfg):
 
                 "save checkpoint"
                 if (step % cfg.report_metrics_every) == 0:
-                    print("training loss: %s" % (loss))
+                    print("training loss: %s" % (loss.item()))
                     save_clip_model(clip, cfg, cfg.clip_config)
 
                 scaler.unscale_(optimizer)
