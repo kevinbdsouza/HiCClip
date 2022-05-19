@@ -93,7 +93,8 @@ def train_clip(device, resume, cfg):
             pairpos_batched = np.load(cfg.batched_hic_path + "embed_%s.npy" % chr, allow_pickle=True)
             maps_batched = np.load(cfg.batched_hic_path + "hic_%s.npy" % chr, allow_pickle=True)
 
-            pairpos_batched, maps_batched = shuffle_pos_maps(pairpos_batched, maps_batched)
+            ind = np.random.permutation(pairpos_batched.shape[0])
+            pairpos_batched, maps_batched = pairpos_batched[ind, :, :, :], maps_batched[ind, :, :, :]
 
             for pairpos, maps in tqdm(zip(pairpos_batched, maps_batched)):
                 pairpos, maps = shuffle_pos_maps(pairpos, maps)

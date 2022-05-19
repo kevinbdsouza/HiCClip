@@ -1,6 +1,6 @@
 import os
 import pathlib
-
+import random
 
 class Config:
     def __init__(self):
@@ -14,9 +14,9 @@ class Config:
         self.genome_len = 288091
         self.resolution = 10000
         self.cell = "GM12878"
-        self.chr_train_list = list(range(2, 23))
+        self.chr_train_list = list(range(1, 23))
         self.chr_test_list = list(range(22, 23))
-        self.chr_train_list_shuff = [1, 22, 2, 11, 16, 3, 8, 21, 7, 4, 12, 20, 5, 10, 19, 6, 18, 9, 13, 17, 14, 15]
+        self.chr_train_list_shuff = random.shuffle(self.chr_train_list)
         self.save_processed_data = False
 
         "fasta"
