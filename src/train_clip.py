@@ -42,7 +42,7 @@ def eval_model(model, device, maps_batched, pos_batched, phase="Validation"):
 
             batch_samples = maps_tensor.shape[0]
 
-            loss = model(pos_tensor, maps_tensor, freeze_image_encoder=False, return_loss=True)
+            loss = model(pos_tensor, maps_tensor, freeze_image_encoder=False)
 
             total_loss += loss.item() * batch_samples
             total_samples += batch_samples
