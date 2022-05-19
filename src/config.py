@@ -14,7 +14,7 @@ class Config:
         self.genome_len = 288091
         self.resolution = 10000
         self.cell = "GM12878"
-        self.chr_train_list = list(range(2, 23))
+        self.chr_train_list = list(range(1, 2))
         self.chr_test_list = list(range(22, 23))
         self.save_processed_data = False
 
@@ -91,13 +91,13 @@ class Config:
                             "use_mlm": False,
                             "text_ssl_loss_weight": 0,
                             "image_ssl_loss_weight": 0}
-        self.clip_batch_size = 100
+        self.clip_batch_size = 50
         self.wandb_clip_config = {"learning_rate": 1.1e-4,
                                   "architecture": "clip",
                                   "dataset": "hic",
                                   "weight_decay": 6.02e-2,
                                   "max_gradient_clipping_norm": 0.5,
-                                  "batch_size": 10 ** 4,
+                                  "batch_size": self.clip_batch_size,
                                   "epochs": 5}
         self.wandb_clip_entity = "clip_ob"
         self.wandb_clip_project = "clip"
