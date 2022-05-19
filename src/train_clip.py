@@ -90,14 +90,14 @@ def train_clip(device, resume, cfg):
             batch_indices = np.random.permutation(pairpos_batched.shape[0])
 
             for batch_indice in tqdm(batch_indices):
-                pairpos = pairpos_batched[batch_indice]
-                maps = maps_batched[batch_indice]
+                pairpos = np.array(pairpos_batched[batch_indice])
+                maps = np.array(maps_batched[batch_indice])
 
                 sample_indices = np.random.permutation(pairpos.shape[0])
                 pairpos, maps = pairpos[sample_indices, :, :], maps[sample_indices, :, :]
 
-                pairpos_tensor = torch.tensor(np.array(pairpos)).to(device)
-                maps_tensor = torch.tensor(np.array(maps)).unsqueeze(1).to(device)
+                pairpos_tensor = torch.tensor(pairpos).to(device)
+                maps_tensor = torch.tensor(maps).unsqueeze(1).to(device)
 
                 with autocast(enabled=cfg.amp):
                     loss = clip(pairpos_tensor, maps_tensor, freeze_image_encoder=False, return_loss=True)
