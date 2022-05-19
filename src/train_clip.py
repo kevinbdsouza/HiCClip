@@ -10,14 +10,9 @@ from x_clip import CLIP
 from dalle.train import load_clip_model, save_clip_model
 from dalle.optimizer import get_optimizer
 from torch.cuda.amp import autocast, GradScaler
-from utils import train_test_eval_split
+import random
 
 os.environ["WANDB_SILENT"] = "true"
-
-
-def shuffle_pos_maps(pairpos_batched, maps_batched):
-    ind = np.random.permutation(pairpos_batched.shape[0])
-    return pairpos_batched[ind, :, :, :], maps_batched[ind, :, :, :]
 
 
 def eval_model(model, device, maps_batched, pos_batched, phase="Validation"):
@@ -100,7 +95,7 @@ def train_clip(device, resume, cfg):
                 maps = maps_batched[batch_indice]
 
                 sample_indices = np.random.permutation(pairpos.shape[0])
-                pairpos, maps = pairpos[sample_indices, :, :],  maps[sample_indices, :, :]
+                pairpos, maps = pairpos[sample_indices, :, :], maps[sample_indices, :, :]
 
                 pairpos_tensor = torch.tensor(np.array(pairpos)).to(device)
                 maps_tensor = torch.tensor(np.array(maps)).unsqueeze(1).to(device)
@@ -131,8 +126,9 @@ def train_clip(device, resume, cfg):
                 optimizer.zero_grad()
 
             "Eval run"
-            eval_maps = None
-            eval_pos = None
+            eval_batches = random.sample(batch_indices, cfg.num_eval_batches)
+            eval_pos = pairpos_batched[eval_batches, :, :, :]
+            eval_maps = maps_batched[eval_batches, :, :, :]
             test_loss = eval_model(clip, device, eval_maps, eval_pos, phase="Validationn")
             print("test loss %s: %s" % (chr, test_loss))
     return clip
