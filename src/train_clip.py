@@ -92,6 +92,7 @@ def train_clip(device, resume, cfg):
     step = 0
     t = time.time()
 
+    clip.train()
     for _ in range(epochs):
 
         for chr in cfg.chr_train_list:
@@ -103,10 +104,7 @@ def train_clip(device, resume, cfg):
                                                                                                     maps_batched)
 
             for pairpos, maps in tqdm(zip(train_pos, train_maps)):
-
-                clip.train()
-
-                pairpos_tensor = torch.tensor(pairpos).double().to(device)
+                pairpos_tensor = torch.tensor(np.array(pairpos)).double().to(device)
                 maps_tensor = torch.tensor(maps).unsqueeze(1).to(device)
 
                 with autocast(enabled=cfg.amp):
