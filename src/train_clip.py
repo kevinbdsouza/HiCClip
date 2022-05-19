@@ -116,10 +116,10 @@ def train_clip(device, resume, cfg):
                 samples_per_sec = cfg.wandb_clip_config["batch_size"] * step / (time.time() - t)
 
                 "save checkpoint every save_interval minutes"
-                if (int(time.time() - t) >= 60 * cfg.save_interval):
-                    t = time.time()
+                #if (int(time.time() - t) >= 60 * cfg.save_interval):
+                #    t = time.time()
 
-                    save_clip_model(cfg.save_path_clip, clip, optimizer, scaler, cfg.clip_config)
+                save_clip_model(cfg.save_path_clip, clip, optimizer, scaler, cfg.clip_config)
 
                 "log to wandb"
                 wandb.log({"Training loss": loss.item(),
