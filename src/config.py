@@ -91,7 +91,7 @@ class Config:
                             "use_mlm": False,
                             "text_ssl_loss_weight": 0.05,
                             "image_ssl_loss_weight": 0.05}
-        self.clip_batch_size = 200
+        self.clip_batch_size = 100
         self.wandb_clip_config = {"learning_rate": 1.1e-4,
                                   "architecture": "clip",
                                   "dataset": "hic",

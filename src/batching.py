@@ -132,11 +132,11 @@ if __name__ == "__main__":
 
     for chr in cfg.chr_train_list:
         batch_embed_ob = BatchHiCLSTMEmbeddings(cfg, chr)
-        batched_embed = batch_embed_ob.batch_embeddings(500)
+        batched_embed = batch_embed_ob.batch_embeddings(cfg.clip_batch_size)
         np.save(cfg.batched_hic_path + "embed_%s.npy" % chr, batched_embed)
 
         batch_hic_ob = BatchHiCMaps(cfg, chr)
-        batched_hic = batch_hic_ob.batch_hic_maps(500)
+        batched_hic = batch_hic_ob.batch_hic_maps(cfg.clip_batch_size)
         np.save(cfg.batched_hic_path + "hic_%s.npy" % chr, batched_hic)
 
     print("done")
