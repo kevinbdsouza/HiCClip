@@ -10,7 +10,6 @@ from x_clip import CLIP
 from dalle.train import load_clip_model, save_clip_model
 from dalle.optimizer import get_optimizer
 from torch.cuda.amp import autocast, GradScaler
-import random
 
 os.environ["WANDB_SILENT"] = "true"
 
@@ -82,7 +81,7 @@ def train_clip(device, resume, cfg):
     clip.train()
     for _ in range(epochs):
 
-        for chr in cfg.chr_train_list:
+        for chr in cfg.chr_train_list_shuff:
             print('Training chr %s' % chr)
 
             pairpos_batched = np.load(cfg.batched_hic_path + "embed_%s.npy" % chr, allow_pickle=True)
@@ -126,11 +125,11 @@ def train_clip(device, resume, cfg):
                 optimizer.zero_grad()
 
             "Eval run"
-            eval_batches = random.sample(batch_indices, cfg.num_eval_batches)
-            eval_pos = pairpos_batched[eval_batches, :, :, :]
-            eval_maps = maps_batched[eval_batches, :, :, :]
-            test_loss = eval_model(clip, device, eval_maps, eval_pos, phase="Validationn")
-            print("test loss %s: %s" % (chr, test_loss))
+            eval_batches = np.random.choice(batch_indices, cfg.num_eval_batches)
+            eval_pos = pairpos_batched[eval_batches]
+            eval_maps = maps_batched[eval_batches]
+            eval_loss = eval_model(clip, device, eval_maps, eval_pos, phase="Validation")
+            print("test loss %s: %s" % (chr, eval_loss))
     return clip
 
 
