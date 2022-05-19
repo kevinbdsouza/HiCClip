@@ -45,7 +45,7 @@ class BatchHiCLSTMEmbeddings():
         embed_rows = self.load_embeddings()
         embed_rows = embed_rows[self.cumpos + 1:self.cumpos_next]
 
-        seq_len = int(self.cfg.text_seq_len/2)
+        seq_len = int(self.cfg.clip_config["text_seq_len"] / 2)
         fill_length = seq_len - (len(embed_rows) % seq_len)
         fill = np.zeros((fill_length, 16))
         embed_rows = np.vstack((embed_rows, fill))
@@ -81,7 +81,8 @@ class BatchHiCMaps():
             self.cumpos_next = cfg.genome_len
         else:
             self.cumpos_next = get_cumpos(cfg, chr + 1)
-        self.fill_length = self.cfg.text_seq_len - ((self.cumpos_next - self.cumpos) % self.cfg.text_seq_len)
+        self.seq_len = int(self.cfg.clip_config["text_seq_len"] / 2)
+        self.fill_length = self.seq_len - ((self.cumpos_next - self.cumpos) % self.seq_len)
         self.hic_size = (self.cumpos_next - self.cumpos) + self.fill_length
 
     def contactProbabilities(self, values, smoothing=8, delta=1e-10):
@@ -110,14 +111,13 @@ class BatchHiCMaps():
 
     def batch_hic_maps(self, batch_size):
         hic_mat = self.load_hic()
-        seq_len = int(self.cfg.text_seq_len/2)
-        num_seqs = int(self.hic_size / seq_len)
+        num_seqs = int(self.hic_size / self.seq_len)
 
         hic_input = []
         batched_hic = []
         for r in range(num_seqs):
             for c in range(num_seqs):
-                hic_window = hic_mat[r * seq_len: (r + 1) * seq_len, c * seq_len: (c + 1) * seq_len]
+                hic_window = hic_mat[r * self.seq_len: (r + 1) * self.seq_len, c * self.seq_len: (c + 1) * self.seq_len]
                 hic_input.append(hic_window)
 
                 if (len(hic_input) == batch_size) or (r == num_seqs - 1 and c == num_seqs - 1):
