@@ -38,7 +38,7 @@ def eval_model(model, device, maps_batched, pos_batched, phase="Validation"):
 
         for maps, pos in zip(maps_batched, pos_batched):
             pos_tensor = torch.tensor(np.array(pos)).to(device)
-            maps_tensor = torch.tensor(np.array(maps)).to(device)
+            maps_tensor = torch.tensor(np.array(maps)).unsqueeze(1).to(device)
 
             batch_samples = maps_tensor.shape[0]
 
@@ -104,7 +104,7 @@ def train_clip(device, resume, cfg):
                                                                                                     maps_batched)
 
             for pairpos, maps in tqdm(zip(train_pos, train_maps)):
-                pairpos_tensor = torch.tensor(np.array(pairpos)).double().to(device)
+                pairpos_tensor = torch.tensor(np.array(pairpos)).to(device)
                 maps_tensor = torch.tensor(np.array(maps)).unsqueeze(1).to(device)
 
                 with autocast(enabled=cfg.amp):
