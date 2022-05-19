@@ -129,7 +129,7 @@ def load_clip_model(dprior_path, device):
     return clip, optimizer, cfg
 
 
-def save_clip_model(save_path, model, optimizer, config, clip_config):
+def save_clip_model(model, optimizer, config, clip_config):
     # Saving State Dict
     print('Saving checkpoint')
 
@@ -137,7 +137,7 @@ def save_clip_model(save_path, model, optimizer, config, clip_config):
                       optimizer=optimizer.state_dict(),
                       clip_config=clip_config,
                       exp_config=config)
-    torch.save(state_dict, save_path + '/' + str(time.time()) + '_saved_model.pth')
+    torch.save(state_dict, config.save_path_clip + config.clip_model_name)
 
 
 def load_diffusion_model(dprior_path, device):

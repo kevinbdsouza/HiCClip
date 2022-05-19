@@ -101,8 +101,9 @@ class Config:
                                   "epochs": 10}
         self.wandb_clip_entity = "clip_ob"
         self.wandb_clip_project = "clip"
-        self.pretrained_clip_model_path = "./clip_checkpoints/clip_try.pth"
-        self.save_path_clip = "./clip_checkpoints"
+        self.clip_model_name = "clip_try.pth"
+        self.pretrained_clip_model_path = "./clip_checkpoints/" + self.clip_model_name
+        self.save_path_clip = "./clip_checkpoints/"
 
         "diffusion parameters"
         self.dpn_depth = 6
