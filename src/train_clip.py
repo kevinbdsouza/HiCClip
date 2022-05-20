@@ -88,18 +88,7 @@ def train_clip(device, resume, cfg):
             maps_batched = np.load(cfg.batched_hic_path + "hic_%s.npy" % chr, allow_pickle=True)
 
             batch_indices = np.random.permutation(pairpos_batched.shape[0])
-            ignore_batches_chr3 = [182, 154, 175, 136, 302, 4, 488, 774, 341, 40, 330, 298, 675, 582, 661, 359, 742,
-                                   162, 733, 567, 327, 386, 770, 463, 50, 196, 273, 393, 499, 89, 305, 185,
-                                   12, 629, 738, 169, 553, 697, 750, 133, 412, 369, 212, 413, 649, 250, 62,
-                                   237, 122, 541, 116, 611, 659, 13, 264, 405, 101, 772, 594, 353, 203, 265,
-                                   511, 721, 740, 255, 604, 754, 680, 584, 0, 215, 285, 83, 436, 588, 398,
-                                   147, 615, 465, 646, 220, 295, 157, 34, 453, 688, 534, 585, 771, 340, 1,
-                                   233, 423, 506, 312, 318, 428, 454, 45, 53, 194, 612, 336]
             for batch_indice in batch_indices:
-                if (chr == 21 and batch_indice == 48) or (
-                        chr == 3 and batch_indice in ignore_batches_chr3):
-                    continue
-
                 pairpos = np.array(pairpos_batched[batch_indice])
                 maps = np.array(maps_batched[batch_indice])
 
@@ -112,7 +101,11 @@ def train_clip(device, resume, cfg):
                 with autocast(enabled=cfg.amp):
                     loss = clip(pairpos_tensor, maps_tensor, freeze_image_encoder=False, return_loss=True)
                     if torch.isnan(loss):
-                        print("done")
+                        clip, cfg = load_clip_model(cfg.pretrained_clip_model_path, device)
+                        continue
+                    else:
+                        save_clip_model(clip, cfg, cfg.clip_config)
+
                     scaler.scale(loss).backward()
 
                 "samples per second"
@@ -127,7 +120,6 @@ def train_clip(device, resume, cfg):
                 "save checkpoint"
                 if (step % cfg.report_metrics_every) == 0:
                     print("training loss: %s" % (loss.item()))
-                    save_clip_model(clip, cfg, cfg.clip_config)
 
                 scaler.unscale_(optimizer)
                 nn.utils.clip_grad_norm_(clip.parameters(), cfg.wandb_clip_config["max_gradient_clipping_norm"])

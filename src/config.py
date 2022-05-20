@@ -17,8 +17,8 @@ class Config:
         self.cell = "GM12878"
         self.chr_train_list = list(range(1, 23))
         self.chr_test_list = list(range(22, 23))
-        self.chr_train_list_shuff = list([3])
-        #random.shuffle(self.chr_train_list_shuff)
+        self.chr_train_list_shuff = list(range(1, 23))
+        random.shuffle(self.chr_train_list_shuff)
         self.save_processed_data = False
 
         "fasta"
@@ -154,3 +154,10 @@ class Config:
 
         self.num_test_embeddings = 100
         self.report_metrics_every = 100
+        self.ignore_batches_chr3 = [182, 154, 175, 136, 302, 4, 488, 774, 341, 40, 330, 298, 675, 582, 661, 359, 742,
+                                    162, 733, 567, 327, 386, 770, 463, 50, 196, 273, 393, 499, 89, 305, 185,
+                                    12, 629, 738, 169, 553, 697, 750, 133, 412, 369, 212, 413, 649, 250, 62,
+                                    237, 122, 541, 116, 611, 659, 13, 264, 405, 101, 772, 594, 353, 203, 265,
+                                    511, 721, 740, 255, 604, 754, 680, 584, 0, 215, 285, 83, 436, 588, 398,
+                                    147, 615, 465, 646, 220, 295, 157, 34, 453, 688, 534, 585, 771, 340, 1,
+                                    233, 423, 506, 312, 318, 428, 454, 45, 53, 194, 612, 336]
