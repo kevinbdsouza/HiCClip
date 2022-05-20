@@ -91,7 +91,7 @@ def train_clip(device, resume, cfg):
 
             for batch_indice in batch_indices:
                 if (chr == 21 and batch_indice == 48) or (
-                        chr == 3 and (batch_indice == 182 or batch_indice == 154 or batch_indice == 175)):
+                        chr == 3 and (batch_indice == 182 or batch_indice == 154 or batch_indice == 175 or batch_indice == 136)):
                     continue
 
                 pairpos = np.array(pairpos_batched[batch_indice])
