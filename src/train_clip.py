@@ -88,14 +88,10 @@ def train_clip(device, resume, cfg):
             maps_batched = np.load(cfg.batched_hic_path + "hic_%s.npy" % chr, allow_pickle=True)
 
             batch_indices = np.random.permutation(pairpos_batched.shape[0])
-
+            ignore_batches_chr3 = [182, 154, 175, 136, 302, 4, 488, 774, 341, 40, 330, 298, 675]
             for batch_indice in batch_indices:
                 if (chr == 21 and batch_indice == 48) or (
-                        chr == 3 and (
-                        batch_indice == 182 or batch_indice == 154 or batch_indice == 175 or
-                        batch_indice == 136 or batch_indice == 302 or batch_indice == 4 or
-                        batch_indice == 488 or batch_indice == 774 or batch_indice == 341 or
-                        batch_indice == 40 or batch_indice == 330 or batch_indice == 298)):
+                        chr == 3 and batch_indice in ignore_batches_chr3):
                     continue
 
                 pairpos = np.array(pairpos_batched[batch_indice])
