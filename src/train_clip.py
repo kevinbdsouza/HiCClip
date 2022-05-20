@@ -104,6 +104,8 @@ def train_clip(device, resume, cfg):
 
                 with autocast(enabled=cfg.amp):
                     loss = clip(pairpos_tensor, maps_tensor, freeze_image_encoder=False, return_loss=True)
+                    if torch.isnan(loss):
+                        print("done")
                     scaler.scale(loss).backward()
 
                 "samples per second"
