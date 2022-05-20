@@ -89,7 +89,7 @@ def train_clip(device, resume, cfg):
 
             batch_indices = np.random.permutation(pairpos_batched.shape[0])
             ignore_batches_chr3 = [182, 154, 175, 136, 302, 4, 488, 774, 341, 40, 330, 298, 675, 582, 661, 359, 742,
-                                   162, 733, 567, 327, 386]
+                                   162, 733, 567, 327, 386, 770]
             for batch_indice in batch_indices:
                 if (chr == 21 and batch_indice == 48) or (
                         chr == 3 and batch_indice in ignore_batches_chr3):
