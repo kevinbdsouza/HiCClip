@@ -91,7 +91,7 @@ def train_clip(device, resume, cfg):
             ignore_batches_chr3 = [182, 154, 175, 136, 302, 4, 488, 774, 341, 40, 330, 298, 675, 582, 661, 359, 742,
                                    162, 733, 567, 327, 386, 770, 463, 50, 196, 273, 393, 499, 89, 305, 185,
                                    12, 629, 738, 169, 553, 697, 750, 133, 412, 369, 212, 413, 649, 250, 62,
-                                   237, 122, 541, 116, 611, 659, 13]
+                                   237, 122, 541, 116, 611, 659, 13, 264]
             for batch_indice in batch_indices:
                 if (chr == 21 and batch_indice == 48) or (
                         chr == 3 and batch_indice in ignore_batches_chr3):
