@@ -82,12 +82,11 @@ def train_clip(device, resume, cfg):
     for _ in range(epochs):
 
         for chr in cfg.chr_train_list_shuff:
-            print('Training chr %s' % chr)
-
             pairpos_batched = np.load(cfg.batched_hic_path + "embed_%s.npy" % chr, allow_pickle=True)
             maps_batched = np.load(cfg.batched_hic_path + "hic_%s.npy" % chr, allow_pickle=True)
 
             batch_indices = np.random.permutation(pairpos_batched.shape[0])
+            running_loss = []
             for batch_indice in batch_indices:
                 pairpos = np.array(pairpos_batched[batch_indice])
                 maps = np.array(maps_batched[batch_indice])
@@ -104,6 +103,7 @@ def train_clip(device, resume, cfg):
                         clip, cfg = load_clip_model(cfg.pretrained_clip_model_path, device)
                         continue
                     else:
+                        running_loss.append(loss.item())
                         save_clip_model(clip, cfg, cfg.clip_config)
 
                     scaler.scale(loss).backward()
@@ -117,10 +117,6 @@ def train_clip(device, resume, cfg):
                            "Steps": step,
                            "Samples per second": samples_per_sec})
 
-                "save checkpoint"
-                if (step % cfg.report_metrics_every) == 0:
-                    print("training loss: %s" % (loss.item()))
-
                 scaler.unscale_(optimizer)
                 nn.utils.clip_grad_norm_(clip.parameters(), cfg.wandb_clip_config["max_gradient_clipping_norm"])
 
@@ -128,12 +124,14 @@ def train_clip(device, resume, cfg):
                 scaler.update()
                 optimizer.zero_grad()
 
+            print("chr: %s loss: %s" % (chr, np.mean(running_loss)))
+
             "Eval run"
-            eval_batches = np.random.choice(batch_indices, cfg.num_eval_batches)
-            eval_pos = pairpos_batched[eval_batches]
-            eval_maps = maps_batched[eval_batches]
-            eval_loss = eval_model(clip, device, eval_maps, eval_pos, phase="Validation")
-            print("test loss %s: %s" % (chr, eval_loss))
+            # eval_batches = np.random.choice(batch_indices, cfg.num_eval_batches)
+            # eval_pos = pairpos_batched[eval_batches]
+            # eval_maps = maps_batched[eval_batches]
+            # eval_loss = eval_model(clip, device, eval_maps, eval_pos, phase="Validation")
+            # print("test loss %s: %s" % (chr, eval_loss))
     return clip
 
 
