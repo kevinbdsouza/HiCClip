@@ -3,6 +3,7 @@ import numpy as np
 import time
 from tqdm import tqdm
 from config import Config
+import random 
 import wandb
 import torch
 from torch import nn
@@ -81,6 +82,7 @@ def train_clip(device, resume, cfg):
     clip.train()
     for ep in range(epochs):
         epoch_loss = []
+        random.shuffle(cfg.chr_train_list_shuff)
         for chr in cfg.chr_train_list_shuff:
             pairpos_batched = np.load(cfg.batched_hic_path + "embed_%s.npy" % chr, allow_pickle=True)
             maps_batched = np.load(cfg.batched_hic_path + "hic_%s.npy" % chr, allow_pickle=True)
@@ -103,7 +105,6 @@ def train_clip(device, resume, cfg):
                         clip, cfg = load_clip_model(cfg.pretrained_clip_model_path, device)
                         continue
                     else:
-                        running_loss.append(loss.item())
                         save_clip_model(clip, cfg, cfg.clip_config)
 
                     scaler.scale(loss).backward()
@@ -113,6 +114,7 @@ def train_clip(device, resume, cfg):
                 samples_per_sec = cfg.wandb_clip_config["batch_size"] * step / (time.time() - t)
 
                 "log to wandb"
+                running_loss.append(loss.item())
                 wandb.log({"Training loss": loss.item(),
                            "Steps": step,
                            "Samples per second": samples_per_sec})
@@ -124,7 +126,7 @@ def train_clip(device, resume, cfg):
                 scaler.update()
                 optimizer.zero_grad()
 
-            epoch_loss.append(running_loss)
+            epoch_loss.append(np.mean(running_loss))
             print("chr: %s loss: %s" % (chr, np.mean(running_loss)))
 
             "Eval run"
