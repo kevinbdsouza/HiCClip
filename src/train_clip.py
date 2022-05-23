@@ -99,7 +99,7 @@ def train_clip(device, resume, cfg):
 
                 with autocast(enabled=cfg.amp):
                     loss = clip(pairpos_tensor, maps_tensor, freeze_image_encoder=False, return_loss=True)
-                    if torch.isnan(loss):
+                    if torch.isnan(loss) or torch.isinf(loss):
                         clip, cfg = load_clip_model(cfg.pretrained_clip_model_path, device)
                         continue
                     else:
