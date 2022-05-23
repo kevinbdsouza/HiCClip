@@ -79,8 +79,8 @@ def train_clip(device, resume, cfg):
     t = time.time()
 
     clip.train()
-    for _ in range(epochs):
-
+    for ep in range(epochs):
+        epoch_loss = []
         for chr in cfg.chr_train_list_shuff:
             pairpos_batched = np.load(cfg.batched_hic_path + "embed_%s.npy" % chr, allow_pickle=True)
             maps_batched = np.load(cfg.batched_hic_path + "hic_%s.npy" % chr, allow_pickle=True)
@@ -124,6 +124,7 @@ def train_clip(device, resume, cfg):
                 scaler.update()
                 optimizer.zero_grad()
 
+            epoch_loss.append(running_loss)
             print("chr: %s loss: %s" % (chr, np.mean(running_loss)))
 
             "Eval run"
@@ -132,6 +133,9 @@ def train_clip(device, resume, cfg):
             # eval_maps = maps_batched[eval_batches]
             # eval_loss = eval_model(clip, device, eval_maps, eval_pos, phase="Validation")
             # print("test loss %s: %s" % (chr, eval_loss))
+        print("############################")
+        print("epoch: %s loss: %s" % (ep, np.mean(epoch_loss)))
+        print("############################")
     return clip
 
 
