@@ -3,7 +3,7 @@ import numpy as np
 import time
 from tqdm import tqdm
 from config import Config
-import random 
+import random
 import wandb
 import torch
 from torch import nn
