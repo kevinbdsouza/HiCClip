@@ -13,6 +13,7 @@ from dalle.optimizer import get_optimizer
 from torch.cuda.amp import autocast, GradScaler
 
 os.environ["WANDB_SILENT"] = "true"
+os.chdir("/home/kevindsouza/Documents/projects/PhD/HiCFold/src")
 
 
 def eval_model(model, device, maps_batched, pos_batched, phase="Validation"):
