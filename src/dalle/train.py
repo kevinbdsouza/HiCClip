@@ -109,19 +109,18 @@ def print_ribbon(s, symbol='=', repeat=40):
 
 
 # saving and loading functions
+def load_clip_model(cfg, device):
+    loaded_obj = torch.load(cfg.pretrained_clip_model_path, map_location='cpu')
 
-# for diffusion prior
-def load_clip_model(dprior_path, device):
-    loaded_obj = torch.load(dprior_path, map_location='cpu')
-
-    # Get hyperparameters of loaded model
+    "get configs"
     clip_config = loaded_obj['clip_config']
-    cfg = loaded_obj['exp_config']
+    if not cfg.new_optim_config:
+        cfg = loaded_obj['exp_config']
 
-    # DiffusionPrior with text embeddings and image embeddings pre-computed
+    "initialzie clip"
     clip = CLIP(**clip_config).to(device)
 
-    # Load state dict from saved model
+    "load state dict from saved model"
     clip.load_state_dict(loaded_obj['model'])
     return clip, cfg
 

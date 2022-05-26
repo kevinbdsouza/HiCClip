@@ -95,11 +95,11 @@ class Config:
                             "text_ssl_loss_weight": 0,
                             "image_ssl_loss_weight": 0}
         self.clip_batch_size = 50
-        self.wandb_clip_config = {"learning_rate": 1.1e-3,
+        self.optim_config = {"learning_rate": 1.1e-2,
                                   "architecture": "clip",
                                   "dataset": "hic",
-                                  "weight_decay": 6.02e-2,
-                                  "max_gradient_clipping_norm": 5,
+                                  "weight_decay": 6.02e-4,
+                                  "max_gradient_clipping_norm": 10,
                                   "batch_size": self.clip_batch_size,
                                   "epochs": 10}
         self.wandb_clip_entity = "clip_ob"
@@ -108,6 +108,8 @@ class Config:
         self.clip_model_name = "clip_try.pth"
         self.pretrained_clip_model_path = "./clip_checkpoints/" + self.clip_model_name
         self.save_path_clip = "./clip_checkpoints/"
+        self.exp_resume = True
+        self.new_optim_config = True
 
         "diffusion parameters"
         self.dpn_depth = 6

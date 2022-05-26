@@ -38,13 +38,14 @@ def eval_model(model, device, maps_batched, pos_batched, phase="Validation"):
     return avg_loss
 
 
-def train_clip(device, resume, cfg):
+def train_clip(device, cfg):
     """Train Clip model"""
 
     "load pre-trained model from DPRIOR_PATH"
-    if resume:
-        clip, cfg = load_clip_model(cfg.pretrained_clip_model_path, device)
-        wandb.init(entity=cfg.wandb_clip_entity, project=cfg.wandb_clip_project, config=cfg.wandb_clip_config,
+    if cfg.exp_resume:
+        clip, cfg = load_clip_model(cfg, device)
+        if not cfg.new_optim_config:
+            wandb.init(entity=cfg.wandb_clip_entity, project=cfg.wandb_clip_project, config=cfg.optim_config,
                    mode="disabled")
     else:
         clip = CLIP(
@@ -70,7 +71,7 @@ def train_clip(device, resume, cfg):
 
     scaler = GradScaler(enabled=cfg.amp)
     optimizer = get_optimizer(clip.parameters(), wd=cfg.wandb_clip_config["weight_decay"],
-                              lr=cfg.wandb_clip_config["learning_rate"])
+                              lr=cfg.optim_config["learning_rate"])
 
     "create save_path if it doesn't exist"
     if not os.path.exists(cfg.save_path_clip):
@@ -103,7 +104,7 @@ def train_clip(device, resume, cfg):
                 with autocast(enabled=cfg.amp):
                     loss = clip(pairpos_tensor, maps_tensor, freeze_image_encoder=False, return_loss=True)
                     if torch.isnan(loss) or torch.isinf(loss):
-                        clip, cfg = load_clip_model(cfg.pretrained_clip_model_path, device)
+                        clip, cfg = load_clip_model(cfg, device)
                         continue
                     else:
                         save_clip_model(clip, cfg, cfg.clip_config)
@@ -145,13 +146,11 @@ def train_clip(device, resume, cfg):
 def train_clip_call():
     cfg = Config()
 
-    resume = True
-
-    if not resume:
+    if not cfg.exp_resume:
         wandb.init(
             entity=cfg.wandb_clip_entity,
             project=cfg.wandb_clip_project,
-            config=cfg.wandb_clip_config,
+            config=cfg.optim_config,
             mode="disabled")
 
     device = "cpu"
@@ -161,7 +160,7 @@ def train_clip_call():
         torch.cuda.set_device(device)
 
     # Training loop
-    clip = train_clip(device, resume, cfg)
+    clip = train_clip(device, cfg)
     return clip
 
 
