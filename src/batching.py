@@ -50,8 +50,8 @@ class BatchIndices():
         batched_indices = []
         for r in range(num_seqs):
             for c in range(num_seqs):
-                r_indices = indices[r * seq_len: (r + 1) * seq_len, :]
-                c_indices = indices[c * seq_len: (c + 1) * seq_len, :]
+                r_indices = indices[r * seq_len: (r + 1) * seq_len]
+                c_indices = indices[c * seq_len: (c + 1) * seq_len]
 
                 temp_indices = np.concatenate((r_indices, c_indices), axis=0)
                 indices_input.append(temp_indices)
