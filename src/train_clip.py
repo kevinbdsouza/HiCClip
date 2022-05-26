@@ -80,7 +80,8 @@ def train_clip(device, cfg):
         epoch_loss = []
         random.shuffle(cfg.chr_train_list_shuff)
         for chr in cfg.chr_train_list_shuff:
-            pairpos_batched = np.load(cfg.batched_hic_path + "embed_%s.npy" % chr, allow_pickle=True)
+            #pairpos_batched = np.load(cfg.batched_hic_path + "embed_%s.npy" % chr, allow_pickle=True)
+            pairpos_batched = np.load(cfg.batched_hic_path + "indices_%s.npy" % chr, allow_pickle=True)
             maps_batched = np.load(cfg.batched_hic_path + "hic_%s.npy" % chr, allow_pickle=True)
 
             batch_indices = np.random.permutation(pairpos_batched.shape[0])
