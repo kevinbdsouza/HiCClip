@@ -44,8 +44,7 @@ def train_clip(device, cfg):
     "load pre-trained model from DPRIOR_PATH"
     if cfg.exp_resume:
         clip, cfg = load_clip_model(cfg, device)
-        if not cfg.new_optim_config:
-            wandb.init(entity=cfg.wandb_clip_entity, project=cfg.wandb_clip_project, config=cfg.optim_config,
+        wandb.init(entity=cfg.wandb_clip_entity, project=cfg.wandb_clip_project, config=cfg.optim_config,
                    mode="disabled")
     else:
         clip = CLIP(
