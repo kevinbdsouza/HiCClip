@@ -105,13 +105,10 @@ def train_clip(device, cfg):
 
                     scaler.scale(loss).backward()
 
-                "samples per second"
-                step += 1
-                samples_per_sec = cfg.optim_config["batch_size"] * step / (time.time() - t)
-
-                "log to wandb"
+                "runnning loss"
                 running_loss.append(loss.item())
 
+                step += 1
                 scaler.unscale_(optimizer)
                 nn.utils.clip_grad_norm_(clip.parameters(), cfg.optim_config["max_gradient_clipping_norm"])
 
