@@ -77,7 +77,7 @@ def train_clip(device, cfg):
     if not os.path.exists(cfg.save_path_clip):
         os.makedirs(cfg.save_path_clip)
 
-    epochs = cfg.wandb_clip_config["epochs"]
+    epochs = cfg.optim_config["epochs"]
     step = 0
     t = time.time()
 
@@ -113,7 +113,7 @@ def train_clip(device, cfg):
 
                 "samples per second"
                 step += 1
-                samples_per_sec = cfg.wandb_clip_config["batch_size"] * step / (time.time() - t)
+                samples_per_sec = cfg.optim_config["batch_size"] * step / (time.time() - t)
 
                 "log to wandb"
                 running_loss.append(loss.item())
@@ -122,7 +122,7 @@ def train_clip(device, cfg):
                            "Samples per second": samples_per_sec})
 
                 scaler.unscale_(optimizer)
-                nn.utils.clip_grad_norm_(clip.parameters(), cfg.wandb_clip_config["max_gradient_clipping_norm"])
+                nn.utils.clip_grad_norm_(clip.parameters(), cfg.optim_config["max_gradient_clipping_norm"])
 
                 scaler.step(optimizer)
                 scaler.update()
