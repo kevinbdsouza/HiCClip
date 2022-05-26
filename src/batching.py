@@ -182,7 +182,7 @@ if __name__ == "__main__":
         """
 
         batch_ind_ob = BatchIndices(cfg, chr)
-        batched_indices = BatchIndices.batch_indices(cfg.clip_batch_size)
+        batched_indices = batch_ind_ob.batch_indices(cfg.clip_batch_size)
         np.save(cfg.batched_hic_path + "indices_%s.npy" % chr, batched_indices)
 
     print("done")
