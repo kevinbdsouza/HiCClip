@@ -1,10 +1,8 @@
 import os
 import numpy as np
 import time
-from tqdm import tqdm
 from config import Config
 import random
-import wandb
 import torch
 from torch import nn
 from x_clip import CLIP
@@ -16,7 +14,7 @@ os.environ["WANDB_SILENT"] = "true"
 os.chdir("/home/kevindsouza/Documents/projects/PhD/HiCFold/src")
 
 
-def eval_model(model, device, maps_batched, pos_batched, phase="Validation"):
+def eval_model(model, device, maps_batched, pos_batched):
     model.eval()
     with torch.no_grad():
         total_loss = 0.
@@ -34,7 +32,6 @@ def eval_model(model, device, maps_batched, pos_batched, phase="Validation"):
             total_samples += batch_samples
 
         avg_loss = (total_loss / total_samples)
-        wandb.log({f'{phase}': avg_loss})
     return avg_loss
 
 
@@ -44,8 +41,6 @@ def train_clip(device, cfg):
     "load pre-trained model from DPRIOR_PATH"
     if cfg.exp_resume:
         clip, cfg = load_clip_model(cfg, device)
-        wandb.init(entity=cfg.wandb_clip_entity, project=cfg.wandb_clip_project, config=cfg.optim_config,
-                   mode="disabled")
     else:
         clip = CLIP(
             dim_text=cfg.clip_config["dim_text"],
@@ -116,9 +111,6 @@ def train_clip(device, cfg):
 
                 "log to wandb"
                 running_loss.append(loss.item())
-                wandb.log({"Training loss": loss.item(),
-                           "Steps": step,
-                           "Samples per second": samples_per_sec})
 
                 scaler.unscale_(optimizer)
                 nn.utils.clip_grad_norm_(clip.parameters(), cfg.optim_config["max_gradient_clipping_norm"])
@@ -144,13 +136,6 @@ def train_clip(device, cfg):
 
 def train_clip_call():
     cfg = Config()
-
-    if not cfg.exp_resume:
-        wandb.init(
-            entity=cfg.wandb_clip_entity,
-            project=cfg.wandb_clip_project,
-            config=cfg.optim_config,
-            mode="disabled")
 
     device = "cpu"
     has_cuda = torch.cuda.is_available()
