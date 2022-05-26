@@ -91,7 +91,7 @@ def train_clip(device, cfg):
                 maps = np.array(maps_batched[batch_indice])
 
                 sample_indices = np.random.permutation(pairpos.shape[0])
-                pairpos, maps = pairpos[sample_indices, :, :], maps[sample_indices, :, :]
+                pairpos, maps = pairpos[sample_indices, :], maps[sample_indices, :, :]
 
                 pairpos_tensor = torch.tensor(pairpos).to(device)
                 maps_tensor = torch.tensor(maps).unsqueeze(1).to(device)
