@@ -25,7 +25,8 @@ class Config:
         self.data_path = "/data2/hicfold/"
         self.downstream_dir = self.data_path + "downstream/"
         self.fasta_batch_size = 1000
-        self.fasta_path = self.data_path + "fasta/"
+        self.fasta_path = self.data_path + "fasta/ncbi-genomes-2022-05-13/"
+        self.fasta_file = "GCF_000001405.40_GRCh38.p14_genomic.fna"
         self.batched_hic_path = self.data_path + "batched_hic_hg19/"
 
         "Model Paramters"
@@ -77,7 +78,7 @@ class Config:
         "clip parameters"
         self.clip_config = {"dim_text": 16,
                             "dim_image": 16,
-                            "dim_latent": 16,
+                            "dim_latent": 64,
                             "num_text_tokens": 288091,
                             "text_enc_depth": 1,
                             "text_seq_len": 200,

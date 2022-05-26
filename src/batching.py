@@ -5,6 +5,7 @@ from torch import nn
 from config import Config
 from utils import get_cumpos
 from utils import simple_plot
+from Bio import SeqIO
 
 
 class BatchFasta():
@@ -15,11 +16,16 @@ class BatchFasta():
     def __init__(self, cfg, chr):
         self.chr = chr
         self.cfg = cfg
+        self.fasta_full_path = cfg.fasta_path + cfg.fasta_file
 
     def load_fasta(self):
-        pass
+        for seq_record in SeqIO.parse(self.fasta_full_path, "fasta"):
+            print(seq_record.id)
+            print(repr(seq_record.seq))
+            print(len(seq_record))
 
     def batch_fasta(self):
+        self.load_fasta()
         pass
 
 
@@ -171,18 +177,22 @@ if __name__ == "__main__":
     cfg = Config()
 
     for chr in cfg.chr_train_list:
+        """
         batch_embed_ob = BatchHiCLSTMEmbeddings(cfg, chr)
         batched_embed = batch_embed_ob.batch_embeddings(cfg.clip_batch_size)
         np.save(cfg.batched_hic_path + "embed_%s.npy" % chr, batched_embed)
 
-        """
         batch_hic_ob = BatchHiCMaps(cfg, chr)
         batched_hic = batch_hic_ob.batch_hic_maps(cfg.clip_batch_size)
         np.save(cfg.batched_hic_path + "hic_%s.npy" % chr, batched_hic)
         """
 
+        """
         batch_ind_ob = BatchIndices(cfg, chr)
         batched_indices = batch_ind_ob.batch_indices(cfg.clip_batch_size)
         np.save(cfg.batched_hic_path + "indices_%s.npy" % chr, batched_indices)
+        """
 
+        batch_fasta_ob = BatchFasta(cfg, chr)
+        batch_fasta_ob.batch_fasta()
     print("done")
