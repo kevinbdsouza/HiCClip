@@ -70,7 +70,7 @@ def train_clip(device, cfg):
             image_ssl_loss_weight=cfg.clip_config["image_ssl_loss_weight"]).to(device)
 
     scaler = GradScaler(enabled=cfg.amp)
-    optimizer = get_optimizer(clip.parameters(), wd=cfg.wandb_clip_config["weight_decay"],
+    optimizer = get_optimizer(clip.parameters(), wd=cfg.optim_config["weight_decay"],
                               lr=cfg.optim_config["learning_rate"])
 
     "create save_path if it doesn't exist"
