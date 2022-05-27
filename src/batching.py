@@ -236,6 +236,7 @@ class BatchHiCMaps():
                             chr_done.append(chr)
                             print("chr %s done" % chr)
                     hic_input.append(hic_window)
+                    del hic_window
 
                 del hic_mat
 
