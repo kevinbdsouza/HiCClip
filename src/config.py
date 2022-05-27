@@ -28,6 +28,8 @@ class Config:
         self.fasta_path = self.data_path + "fasta/ncbi-genomes-2022-05-13/"
         self.fasta_file = "GCF_000001405.40_GRCh38.p14_genomic.fna"
         self.batched_hic_path = self.data_path + "batched_hic_hg19/"
+        self.cross_chromosome_batches = self.data_path + "cross_chromosome_batches/"
+        self.batch_chromosome_wise = True
 
         "Model Paramters"
         self.pos_embed_size = 16
@@ -78,7 +80,7 @@ class Config:
         "clip parameters"
         self.clip_config = {"dim_text": 16,
                             "dim_image": 16,
-                            "dim_latent": 64,
+                            "dim_latent": 32,
                             "num_text_tokens": 288091,
                             "text_enc_depth": 1,
                             "text_seq_len": 200,

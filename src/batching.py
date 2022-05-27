@@ -172,27 +172,101 @@ class BatchHiCMaps():
 
         return batched_hic
 
+    def batch_chromo_init(self, chr):
+        self.chr = chr
+        self.cumpos = get_cumpos(self.cfg, chr)
+        if chr == 22:
+            self.cumpos_next = cfg.genome_len
+        else:
+            self.cumpos_next = get_cumpos(cfg, chr + 1)
+        self.fill_length = self.seq_len - ((self.cumpos_next - self.cumpos) % self.seq_len)
+        self.hic_size = (self.cumpos_next - self.cumpos) + self.fill_length
+        hic_mat = self.load_hic()
+        return hic_mat
+
+    def modify_reps(self, chr_done, rep_chrs):
+        if len(chr_done) >= 21:
+            rep_chrs = 64
+        elif len(chr_done) >= 20:
+            rep_chrs = 32
+        elif len(chr_done) >= 18:
+            rep_chrs = 16
+        elif len(chr_done) >= 14:
+            rep_chrs = 8
+        elif len(chr_done) >= 12:
+            rep_chrs = 6
+        elif len(chr_done) >= 6:
+            rep_chrs = 4
+        else:
+            pass
+
+        return rep_chrs
+
+    def batch_chromosome_wise(self):
+        num_chrs = 22
+        rep_chrs = 3
+        batch_num = 0
+
+        chr_done = []
+        r_prev = np.zeros((num_chrs)).astype(int)
+        c_prev = np.zeros(num_chrs).astype(int)
+
+        while len(chr_done) < 22:
+            batch_num += 1
+            hic_input = []
+            rep_chrs = self.modify_reps(chr_done, rep_chrs)
+            for chr in range(1, num_chrs + 1):
+                if chr in chr_done:
+                    continue
+
+                hic_mat = self.batch_chromo_init(chr)
+                num_seqs = int(self.hic_size / self.seq_len)
+
+                for i in range(0, rep_chrs):
+                    if chr in chr_done:
+                        continue
+                    hic_window = hic_mat[r_prev[chr - 1] * self.seq_len: (r_prev[chr - 1] + 1) * self.seq_len,
+                                 c_prev[chr - 1] * self.seq_len: (c_prev[chr - 1] + 1) * self.seq_len]
+                    c_prev[chr - 1] += 1
+                    if c_prev[chr - 1] == num_seqs:
+                        c_prev[chr - 1] = 0
+                        r_prev[chr - 1] += 1
+
+                        if r_prev[chr - 1] == num_seqs:
+                            chr_done.append(chr)
+                            print("chr %s done" % chr)
+                    hic_input.append(hic_window)
+
+            np.save(cfg.cross_chromosome_batches + "cross_chr_hic_%s.npy" % batch_num, hic_input)
+
 
 if __name__ == "__main__":
     cfg = Config()
 
-    for chr in cfg.chr_train_list:
-        """
-        batch_embed_ob = BatchHiCLSTMEmbeddings(cfg, chr)
-        batched_embed = batch_embed_ob.batch_embeddings(cfg.clip_batch_size)
-        np.save(cfg.batched_hic_path + "embed_%s.npy" % chr, batched_embed)
+    if cfg.batch_chromosome_wise:
+        batch_hic_ob = BatchHiCMaps(cfg, 1)
+        batch_hic_ob.batch_chromosome_wise()
+    else:
+        for chr in cfg.chr_train_list:
+            """
+            batch_embed_ob = BatchHiCLSTMEmbeddings(cfg, chr)
+            batched_embed = batch_embed_ob.batch_embeddings(cfg.clip_batch_size)
+            np.save(cfg.batched_hic_path + "embed_%s.npy" % chr, batched_embed)
+    
+            batch_hic_ob = BatchHiCMaps(cfg, chr)
+            batched_hic = batch_hic_ob.batch_hic_maps(cfg.clip_batch_size)
+            np.save(cfg.batched_hic_path + "hic_%s.npy" % chr, batched_hic)
+            """
 
-        batch_hic_ob = BatchHiCMaps(cfg, chr)
-        batched_hic = batch_hic_ob.batch_hic_maps(cfg.clip_batch_size)
-        np.save(cfg.batched_hic_path + "hic_%s.npy" % chr, batched_hic)
-        """
+            """
+            batch_ind_ob = BatchIndices(cfg, chr)
+            batched_indices = batch_ind_ob.batch_indices(cfg.clip_batch_size)
+            np.save(cfg.batched_hic_path + "indices_%s.npy" % chr, batched_indices)
+            """
 
-        """
-        batch_ind_ob = BatchIndices(cfg, chr)
-        batched_indices = batch_ind_ob.batch_indices(cfg.clip_batch_size)
-        np.save(cfg.batched_hic_path + "indices_%s.npy" % chr, batched_indices)
-        """
+            """
+            batch_fasta_ob = BatchFasta(cfg, chr)
+            batch_fasta_ob.batch_fasta()
+            """
 
-        batch_fasta_ob = BatchFasta(cfg, chr)
-        batch_fasta_ob.batch_fasta()
     print("done")
