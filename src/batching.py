@@ -185,17 +185,17 @@ class BatchHiCMaps():
         return hic_mat
 
     def modify_reps(self, chr_done, rep_chrs):
-        if len(chr_done) >= 21:
+        if len(chr_done) >= 20:
             rep_chrs = 64
-        elif len(chr_done) >= 20:
+        elif len(chr_done) >= 19:
             rep_chrs = 32
-        elif len(chr_done) >= 18:
+        elif len(chr_done) >= 17:
             rep_chrs = 16
-        elif len(chr_done) >= 14:
+        elif len(chr_done) >= 13:
             rep_chrs = 8
-        elif len(chr_done) >= 12:
+        elif len(chr_done) >= 11:
             rep_chrs = 6
-        elif len(chr_done) >= 6:
+        elif len(chr_done) >= 5:
             rep_chrs = 4
         else:
             pass
@@ -211,11 +211,11 @@ class BatchHiCMaps():
         r_prev = np.zeros((num_chrs)).astype(int)
         c_prev = np.zeros(num_chrs).astype(int)
 
-        while len(chr_done) < 22:
+        while len(chr_done) < 21:
             batch_num += 1
             hic_input = []
             rep_chrs = self.modify_reps(chr_done, rep_chrs)
-            for chr in range(1, num_chrs + 1):
+            for chr in range(2, num_chrs + 1):
                 if chr in chr_done:
                     continue
 
@@ -236,6 +236,8 @@ class BatchHiCMaps():
                             chr_done.append(chr)
                             print("chr %s done" % chr)
                     hic_input.append(hic_window)
+
+                del hic_mat
 
             np.save(cfg.cross_chromosome_batches + "cross_chr_hic_%s.npy" % batch_num, hic_input)
 
