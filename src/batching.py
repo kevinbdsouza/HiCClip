@@ -203,7 +203,7 @@ class BatchHiCMaps():
 
         return rep_chrs
 
-    def get_partial_input(self, hic_input, r_prev, c_prev, chr_done, rep_chrs, return_dict):
+    def get_partial_input(self, chr, hic_input, r_prev, c_prev, chr_done, rep_chrs, return_dict):
         hic_mat = self.batch_chromo_init(chr)
         num_seqs = int(self.hic_size / self.seq_len)
 
@@ -247,7 +247,7 @@ class BatchHiCMaps():
                 manager = mp.Manager()
                 return_dict = manager.dict()
                 proc = mp.Process(target=self.get_partial_input,
-                                  args=(hic_input, r_prev, c_prev, chr_done, rep_chrs, return_dict))
+                                  args=(chr, hic_input, r_prev, c_prev, chr_done, rep_chrs, return_dict))
                 proc.start()
                 proc.join()
 
