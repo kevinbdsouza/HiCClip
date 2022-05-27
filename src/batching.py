@@ -4,6 +4,7 @@ from config import Config
 from utils import get_cumpos
 from Bio import SeqIO
 import os
+import gc
 
 os.chdir("/home/kevindsouza/Documents/projects/PhD/HiCFold/src")
 
@@ -237,10 +238,14 @@ class BatchHiCMaps():
                             print("chr %s done" % chr)
                     hic_input.append(hic_window)
                     del hic_window
+                    gc.collect()
 
                 del hic_mat
+                gc.collect()
 
             np.save(cfg.cross_chromosome_batches + "cross_chr_hic_%s.npy" % batch_num, hic_input)
+            del hic_input
+            gc.collect()
 
 
 if __name__ == "__main__":
