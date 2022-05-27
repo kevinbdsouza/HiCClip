@@ -1,11 +1,11 @@
 import numpy as np
 import pandas as pd
-import torch
-from torch import nn
 from config import Config
 from utils import get_cumpos
-from utils import simple_plot
 from Bio import SeqIO
+import os
+
+os.chdir("/home/kevindsouza/Documents/projects/PhD/HiCFold/src")
 
 
 class BatchFasta():
