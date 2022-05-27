@@ -4,7 +4,7 @@ from config import Config
 from utils import get_cumpos
 from Bio import SeqIO
 import os
-import gc
+import multiprocessing as mp
 
 os.chdir("/home/kevindsouza/Documents/projects/PhD/HiCFold/src")
 
@@ -203,6 +203,30 @@ class BatchHiCMaps():
 
         return rep_chrs
 
+    def get_partial_input(self, hic_input, r_prev, c_prev, chr_done, rep_chrs, return_dict):
+        hic_mat = self.batch_chromo_init(chr)
+        num_seqs = int(self.hic_size / self.seq_len)
+
+        for i in range(0, rep_chrs):
+            if chr in chr_done:
+                continue
+            hic_window = hic_mat[r_prev[chr - 1] * self.seq_len: (r_prev[chr - 1] + 1) * self.seq_len,
+                         c_prev[chr - 1] * self.seq_len: (c_prev[chr - 1] + 1) * self.seq_len]
+            c_prev[chr - 1] += 1
+            if c_prev[chr - 1] == num_seqs:
+                c_prev[chr - 1] = 0
+                r_prev[chr - 1] += 1
+
+                if r_prev[chr - 1] == num_seqs:
+                    chr_done.append(chr)
+                    print("chr %s done" % chr)
+            hic_input.append(hic_window)
+
+        return_dict["hic_input"] = hic_input
+        return_dict["r_prev"] = r_prev
+        return_dict["c_prev"] = c_prev
+        return_dict["chr_done"] = chr_done
+
     def batch_chromosome_wise(self):
         num_chrs = 22
         rep_chrs = 3
@@ -220,32 +244,19 @@ class BatchHiCMaps():
                 if chr in chr_done:
                     continue
 
-                hic_mat = self.batch_chromo_init(chr)
-                num_seqs = int(self.hic_size / self.seq_len)
+                manager = mp.Manager()
+                return_dict = manager.dict()
+                proc = mp.Process(target=self.get_partial_input,
+                                  args=(hic_input, r_prev, c_prev, chr_done, rep_chrs, return_dict))
+                proc.start()
+                proc.join()
 
-                for i in range(0, rep_chrs):
-                    if chr in chr_done:
-                        continue
-                    hic_window = hic_mat[r_prev[chr - 1] * self.seq_len: (r_prev[chr - 1] + 1) * self.seq_len,
-                                 c_prev[chr - 1] * self.seq_len: (c_prev[chr - 1] + 1) * self.seq_len]
-                    c_prev[chr - 1] += 1
-                    if c_prev[chr - 1] == num_seqs:
-                        c_prev[chr - 1] = 0
-                        r_prev[chr - 1] += 1
-
-                        if r_prev[chr - 1] == num_seqs:
-                            chr_done.append(chr)
-                            print("chr %s done" % chr)
-                    hic_input.append(hic_window)
-                    del hic_window
-                    gc.collect()
-
-                del hic_mat
-                gc.collect()
+                hic_input = return_dict["hic_input"]
+                r_prev = return_dict["r_prev"]
+                c_prev = return_dict["c_prev"]
+                chr_done = return_dict["chr_done"]
 
             np.save(cfg.cross_chromosome_batches + "cross_chr_hic_%s.npy" % batch_num, hic_input)
-            del hic_input
-            gc.collect()
 
 
 if __name__ == "__main__":
