@@ -185,17 +185,17 @@ class BatchHiCMaps():
         return hic_mat
 
     def modify_reps(self, chr_done, rep_chrs):
-        if len(chr_done) >= 20:
+        if len(chr_done) >= 17:
             rep_chrs = 64
-        elif len(chr_done) >= 19:
+        elif len(chr_done) >= 16:
             rep_chrs = 32
-        elif len(chr_done) >= 17:
+        elif len(chr_done) >= 14:
             rep_chrs = 16
-        elif len(chr_done) >= 13:
+        elif len(chr_done) >= 10:
             rep_chrs = 8
-        elif len(chr_done) >= 11:
+        elif len(chr_done) >= 8:
             rep_chrs = 6
-        elif len(chr_done) >= 5:
+        elif len(chr_done) >= 2:
             rep_chrs = 4
         else:
             pass
@@ -211,11 +211,11 @@ class BatchHiCMaps():
         r_prev = np.zeros((num_chrs)).astype(int)
         c_prev = np.zeros(num_chrs).astype(int)
 
-        while len(chr_done) < 21:
+        while len(chr_done) < 18:
             batch_num += 1
             hic_input = []
             rep_chrs = self.modify_reps(chr_done, rep_chrs)
-            for chr in range(2, num_chrs + 1):
+            for chr in range(5, num_chrs + 1):
                 if chr in chr_done:
                     continue
 
