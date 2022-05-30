@@ -77,7 +77,9 @@ def train_clip(device, cfg):
     clip.train()
     for ep in range(epochs):
         epoch_loss = []
-        for batch in range(1, 2255):
+        batch_indices = np.arange(1, 2255)
+        random.shuffle(batch_indices)
+        for batch in batch_indices:
             pairpos_batched = np.load(cfg.cross_chromosome_batches + "cross_chr_ind_%s.npy" % batch, allow_pickle=True)
             maps_batched = np.load(cfg.cross_chromosome_batches + "cross_chr_hic_%s.npy" % batch, allow_pickle=True)
 
