@@ -154,8 +154,8 @@ class BatchIndices():
         batch_num = 0
 
         chr_done = [21, 22, 19, 20, 18, 17]
-        #r_prev = np.zeros((num_chrs)).astype(int)
-        #c_prev = np.zeros(num_chrs).astype(int)
+        # r_prev = np.zeros((num_chrs)).astype(int)
+        # c_prev = np.zeros(num_chrs).astype(int)
         r_prev = np.load(cfg.cross_chromosome_batches + "r_prev.npy")
         c_prev = np.load(cfg.cross_chromosome_batches + "c_prev.npy")
 
@@ -326,9 +326,11 @@ class BatchHiCMaps():
         rep_chrs = 4
         batch_num = 0
 
-        chr_done = [22, 21, 20, 19, 18, 17]
-        r_prev = np.zeros((num_chrs)).astype(int)
-        c_prev = np.zeros(num_chrs).astype(int)
+        chr_done = [21, 22, 19, 20, 18, 17]
+        #r_prev = np.zeros((num_chrs)).astype(int)
+        #c_prev = np.zeros(num_chrs).astype(int)
+        r_prev = np.load(cfg.cross_chromosome_batches + "r_prev.npy")
+        c_prev = np.load(cfg.cross_chromosome_batches + "c_prev.npy")
 
         while len(chr_done) < 18:
             batch_num += 1
@@ -359,11 +361,11 @@ if __name__ == "__main__":
     cfg = Config()
 
     if cfg.batch_chromosome_wise:
-        # batch_hic_ob = BatchHiCMaps(cfg, 1)
-        # batch_hic_ob.batch_chromosome_wise()
+        batch_hic_ob = BatchHiCMaps(cfg, 1)
+        batch_hic_ob.batch_chromosome_wise()
 
-        batch_ind_ob = BatchIndices(cfg, 1)
-        batch_ind_ob.batch_chromosome_wise()
+        # batch_ind_ob = BatchIndices(cfg, 1)
+        # batch_ind_ob.batch_chromosome_wise()
     else:
         for chr in cfg.chr_train_list:
             """
