@@ -63,9 +63,13 @@ def train_clip(device, cfg):
             text_ssl_loss_weight=cfg.clip_config["text_ssl_loss_weight"],
             image_ssl_loss_weight=cfg.clip_config["image_ssl_loss_weight"]).to(device)
 
+    batch_indices = np.arange(1, 2255)
     scaler = GradScaler(enabled=cfg.amp)
     optimizer = get_optimizer(clip.parameters(), wd=cfg.optim_config["weight_decay"],
                               lr=cfg.optim_config["learning_rate"])
+    scheduler = torch.optim.lr_scheduler.OneCycleLR(optimizer, max_lr=cfg.optim_config["scheduler_lr"],
+                                                    epochs=cfg.optim_config["epochs"],
+                                                    steps_per_epoch=len(batch_indices))
 
     "create save_path if it doesn't exist"
     if not os.path.exists(cfg.save_path_clip):
@@ -77,7 +81,6 @@ def train_clip(device, cfg):
     clip.train()
     for ep in range(epochs):
         epoch_loss = []
-        batch_indices = np.arange(1, 2255)
         random.shuffle(batch_indices)
         for batch in batch_indices:
             pairpos_batched = np.load(cfg.cross_chromosome_batches + "cross_chr_ind_%s.npy" % batch, allow_pickle=True)
@@ -110,6 +113,11 @@ def train_clip(device, cfg):
             nn.utils.clip_grad_norm_(clip.parameters(), cfg.optim_config["max_gradient_clipping_norm"])
 
             scaler.step(optimizer)
+            scale = scaler.get_scale()
+            skip_lr_sched = (scale > scaler.get_scale())
+            if not skip_lr_sched:
+                scheduler.step()
+
             scaler.update()
             optimizer.zero_grad()
 
