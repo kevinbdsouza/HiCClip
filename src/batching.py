@@ -162,7 +162,8 @@ class BatchIndices():
             indices_input = []
             rep_chrs = self.modify_reps(chr_done, rep_chrs)
             if batch_num == 2254:
-                print("stop")
+                np.save(cfg.cross_chromosome_batches + "r_prev.npy", r_prev)
+                np.save(cfg.cross_chromosome_batches + "c_prev.npy", c_prev)
             for chr in range(5, num_chrs + 1):
                 if chr in chr_done:
                     continue
