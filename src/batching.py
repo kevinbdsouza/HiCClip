@@ -150,21 +150,21 @@ class BatchIndices():
 
     def batch_chromosome_wise(self):
         num_chrs = 22
-        rep_chrs = 3
+        rep_chrs = 4
         batch_num = 0
 
-        chr_done = []
-        r_prev = np.zeros((num_chrs)).astype(int)
-        c_prev = np.zeros(num_chrs).astype(int)
+        chr_done = [21, 22, 19, 20, 18, 17]
+        #r_prev = np.zeros((num_chrs)).astype(int)
+        #c_prev = np.zeros(num_chrs).astype(int)
+        r_prev = np.load(cfg.cross_chromosome_batches + "r_prev.npy")
+        c_prev = np.load(cfg.cross_chromosome_batches + "c_prev.npy")
 
         while len(chr_done) < 18:
             batch_num += 1
             indices_input = []
             rep_chrs = self.modify_reps(chr_done, rep_chrs)
-            if batch_num == 2254:
-                np.save(cfg.cross_chromosome_batches + "r_prev.npy", r_prev)
-                np.save(cfg.cross_chromosome_batches + "c_prev.npy", c_prev)
-                break
+            if batch_num <= 2254:
+                continue
             for chr in range(5, num_chrs + 1):
                 if chr in chr_done:
                     continue
@@ -181,7 +181,7 @@ class BatchIndices():
                 c_prev = return_dict["c_prev"]
                 chr_done = return_dict["chr_done"]
 
-            # np.save(cfg.cross_chromosome_batches + "cross_chr_ind_%s.npy" % batch_num, indices_input)
+            np.save(cfg.cross_chromosome_batches + "cross_chr_ind_%s.npy" % batch_num, indices_input)
 
     def batch_indices(self, batch_size):
         self.seq_len = int(self.cfg.clip_config["text_seq_len"] / 2)
