@@ -150,10 +150,10 @@ class BatchIndices():
 
     def batch_chromosome_wise(self):
         num_chrs = 22
-        rep_chrs = 4
+        rep_chrs = 3
         batch_num = 0
 
-        chr_done = [22, 21, 20, 19, 18, 17]
+        chr_done = []
         r_prev = np.zeros((num_chrs)).astype(int)
         c_prev = np.zeros(num_chrs).astype(int)
 
