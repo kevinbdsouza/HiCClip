@@ -63,7 +63,7 @@ def train_clip(device, cfg):
             text_ssl_loss_weight=cfg.clip_config["text_ssl_loss_weight"],
             image_ssl_loss_weight=cfg.clip_config["image_ssl_loss_weight"]).to(device)
 
-    batch_indices = np.arange(1, 2255)
+    batch_indices = np.arange(1, 4533)
     scaler = GradScaler(enabled=cfg.amp)
     optimizer = get_optimizer(clip.parameters(), wd=cfg.optim_config["weight_decay"],
                               lr=cfg.optim_config["learning_rate"])
