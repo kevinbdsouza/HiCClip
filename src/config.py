@@ -112,7 +112,7 @@ class Config:
         self.clip_model_name = "clip_try3.pth"
         self.pretrained_clip_model_path = "./clip_checkpoints/" + self.clip_model_name
         self.save_path_clip = "./clip_checkpoints/"
-        self.exp_resume = True
+        self.exp_resume = False
         self.new_optim_config = True
 
         "diffusion parameters"
