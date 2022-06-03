@@ -121,8 +121,6 @@ def train_clip(device, cfg):
             scaler.update()
             optimizer.zero_grad()
 
-            epoch_loss.append(np.mean(epoch_loss))
-
         print("############################")
         print("epoch: %s loss: %s" % (ep, np.mean(epoch_loss)))
         print("############################")

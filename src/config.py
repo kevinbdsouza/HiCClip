@@ -104,7 +104,7 @@ class Config:
                                   "weight_decay": 6.02e-4,
                                   "max_gradient_clipping_norm": 10,
                                   "batch_size": self.clip_batch_size,
-                                  "epochs": 20,
+                                  "epochs": 5,
                                   "scheduler_lr": 1.1e-3}
         self.wandb_clip_entity = "clip_ob"
         self.wandb_clip_project = "clip"
